@@ -85,7 +85,7 @@
   /* Enhanced Button Variants */
   .btn-hero {
     @apply shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95;
-    @apply font-medium px-6 py-3 rounded-xl;
+    @apply font-medium px-4 py-2 rounded-xl cursor-pointer;
 
     background: linear-gradient(to right, rgba(var(--primary), 1), rgba(var(--primary-glow), 1));
     color: rgba(var(--primary-foreground), 1);
@@ -108,6 +108,22 @@
       color: rgba(var(--primary-foreground), 1);
       box-shadow: var(--shadow-soft);
     }
+  }
+
+  .gradient-primary{
+    background: var(--gradient-primary);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero)
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary)
+  }
+
+  .gradient-secondary {
+    background: var(--gradient-secondary)
   }
 
   .btn-glass {
@@ -223,14 +239,14 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
+    animation: shimmer 3s linear infinite;
   }
 
   /* Glass Effect */
   .glass {
-    @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80;
-    @apply border border-white/20 dark:border-gray-700/30;
-    @apply rounded-xl;
+    @apply backdrop-blur-xl bg-white/60;   /* more blur, less opacity */
+    @apply border border-white/30;        /* subtle white border */
+    @apply rounded-2xl shadow-lg;
   }
 
   .glass-strong {
@@ -318,3 +334,4 @@
     background-position: 200% 0;
   }
 }
+
