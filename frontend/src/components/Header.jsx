@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Calendar, LogOut, Menu, Sparkles, User, X } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import NotificationCenter from './NotificationCenter'
 
 const Header = () => {
@@ -28,7 +28,7 @@ const Header = () => {
               <h1 className="text-md sm:text-xl font-bold text-gradient">
                 EventBuddy
               </h1>
-              <div variant="secondary" className="rounded-full px-2 py-0.5 text-[10px] sm:text-xs border-transparent font-semibold bg-[rgb(var(--secondary))] transition-all text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.6)]">
+              <div className="rounded-full px-2 py-0.5 text-[10px] sm:text-xs border-transparent font-semibold bg-[rgb(var(--secondary))] transition-all text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.6)]">
                 Smart Planning
               </div>
             </div>
@@ -36,8 +36,10 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className='hidden md:flex items-center gap-x-8'>
+
             <a href="#features" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
               Features
+              <hr className='border-none outline-none h-0.5 bg-[rgb(var(--primary))] w-3/5 mx-auto hidden'/>
             </a>
 
             <Link to="/vendors" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
@@ -46,10 +48,6 @@ const Header = () => {
 
             <Link to="/dashboard" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
               Dashboard
-            </Link>
-
-            <Link to="/calendar" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
-              Calendar
             </Link>
           </nav>
 
@@ -94,7 +92,7 @@ const Header = () => {
               )
             }
 
-            <button className="md:hidden rounded-lg font-medium transition-all duration-300 hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 px-2 py-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <button className="md:hidden rounded-lg font-medium transition-all duration-300 hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 px-2 py-1 cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className='h-4 w-4 sm:h-6 sm:w-6' /> : <Menu className='h-4 w-4 sm:h-6 sm:w-6' />}
             </button>
           </div>
@@ -112,9 +110,6 @@ const Header = () => {
                 </Link>
                 <Link to="/dashboard" className="text-[rgb(var(--foreground))] hover:text-[rgb(var(--primary))] transition-all duration-300">
                   Dashboard
-                </Link>
-                <Link to="/calendar" className="text-[rgb(var(--foreground))] hover:text-[rgb(var(--primary))] transition-all duration-300">
-                  Calendar
                 </Link>
 
                 {!user && (
