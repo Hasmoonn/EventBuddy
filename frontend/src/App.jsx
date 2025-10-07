@@ -13,7 +13,6 @@ import Profile from './pages/Profile'
 import Settings from './pages/Settings'
 import Messages from './pages/Messages'
 import Analytics from './pages/Analytics'
-import Calendar from './pages/Calendar'
 import About from './pages/About'
 import Help from './pages/Help'
 import AdminPanel from './pages/AdminPanel'
@@ -34,8 +33,7 @@ const App = () => {
         <Route path='/profile' element={<Profile />} /> 
         <Route path='/settings' element={<Settings />} /> 
         <Route path='/messages' element={<Messages />} /> 
-        <Route path='/analytics' element={<Analytics />} /> 
-        <Route path='/calendar' element={<Calendar />} /> 
+        <Route path='/analytics' element={<Analytics />} />  
         <Route path='/about' element={<About />} /> 
         <Route path='/help' element={<Help />} /> 
         <Route path='/admin' element={<AdminPanel />} /> 

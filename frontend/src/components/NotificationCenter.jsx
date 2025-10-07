@@ -70,7 +70,7 @@ const NotificationCenter = () => {
 
   return (
     <div className="relative">
-      <button onClick={() => setIsOpen(!isOpen)} className='relative hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 rounded-lg px-3 py-1 inline-flex items-center justify-center gap-2 text-sm font-medium transition-all duration-300'>
+      <button onClick={() => setIsOpen(!isOpen)} className='relative hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 rounded-lg px-3 py-1 inline-flex items-center justify-center gap-2 text-sm font-medium transition-all duration-300 cursor-pointer'>
         <Bell className='w-3 h-3 sm:w-5 sm:h-5' />
         {unreadCount > 0 && (
           <div className="absolute -top-1 right-1 sm:-top-1 sm:-right-1 h-3 w-3 sm:h-5 sm:w-5 p-0 inline-flex items-center justify-center rounded-full border text-xs font-semibold border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]">

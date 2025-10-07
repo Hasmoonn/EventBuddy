@@ -148,7 +148,7 @@
     &:hover {
       box-shadow: var(--shadow-soft);
       border-color: rgba(var(--primary), 0.2);
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
   }
 
@@ -166,7 +166,7 @@
     &:hover {
       box-shadow: var(--shadow-glow);
       border-color: rgba(var(--primary), 0.4);
-      transform: scale(1.02);
+      /* transform: scale(1.01); */
     }
   }
 
@@ -195,6 +195,10 @@
       box-shadow: var(--shadow-soft);
       border-color: rgba(var(--primary), 0.3);
     }
+  }
+
+  .active hr{
+    @apply block;
   }
 
   /* Animation Classes */
@@ -250,8 +254,8 @@
   }
 
   .glass-strong {
-    @apply backdrop-blur-xl bg-white/90 dark:bg-gray-900/90;
-    @apply border border-white/30 dark:border-gray-700/40;
+    @apply backdrop-blur-xl bg-white/90;
+    @apply border border-white/30;
     @apply rounded-xl;
     
     box-shadow: var(--shadow-soft);
