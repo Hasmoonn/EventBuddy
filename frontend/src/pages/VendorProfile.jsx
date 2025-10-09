@@ -25,9 +25,40 @@ const Vendors = () => {
     }
   }
 
+  const filterVendors = async () => {
+    try {
+      let filtered = vendors;
+
+      if (searchTerm) {
+        filtered = filtered.filter(vendor =>
+          vendor.business_name.toLowerCase().includes(searchTerm.toLowerCase()) || vendor.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter(vendor => vendor.category === selectedCategory);
+      }
+
+      if (selectedLocation !== 'all') {
+        filtered = filtered.filter(vendor =>
+          vendor.location.toLowerCase().includes(selectedLocation.toLowerCase())
+        );
+      }
+
+      setFilteredVendors(filtered);
+        
+    } catch (error) {
+        toast.error('error occured')
+    }
+  }
+
   useEffect(() => {
     fetchVendors();
   }, []);
+
+  useEffect(() => {
+    filterVendors();
+  }, [vendors, searchTerm, selectedCategory, selectedLocation]);
 
   if (loading) {
     return (
@@ -37,7 +68,7 @@ const Vendors = () => {
     );
   }
 
-  return <div>Vendors Component Initialized</div>
+  return <div>Vendors Component with Filtering Logic</div>
 }
 
 export default Vendors
