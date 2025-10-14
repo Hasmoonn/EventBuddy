@@ -85,7 +85,7 @@
   /* Enhanced Button Variants */
   .btn-hero {
     @apply shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95;
-    @apply font-medium px-6 py-3 rounded-xl;
+    @apply font-medium px-4 py-2 rounded-xl cursor-pointer;
 
     background: linear-gradient(to right, rgba(var(--primary), 1), rgba(var(--primary-glow), 1));
     color: rgba(var(--primary-foreground), 1);
@@ -110,6 +110,22 @@
     }
   }
 
+  .gradient-primary{
+    background: var(--gradient-primary);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero)
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary)
+  }
+
+  .gradient-secondary {
+    background: var(--gradient-secondary)
+  }
+
   .btn-glass {
     @apply backdrop-blur-md bg-white/10 border border-white/20;
     @apply text-white hover:bg-white/20 transition-all duration-300;
@@ -132,7 +148,7 @@
     &:hover {
       box-shadow: var(--shadow-soft);
       border-color: rgba(var(--primary), 0.2);
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
   }
 
@@ -150,7 +166,7 @@
     &:hover {
       box-shadow: var(--shadow-glow);
       border-color: rgba(var(--primary), 0.4);
-      transform: scale(1.02);
+      /* transform: scale(1.01); */
     }
   }
 
@@ -179,6 +195,10 @@
       box-shadow: var(--shadow-soft);
       border-color: rgba(var(--primary), 0.3);
     }
+  }
+
+  .active hr{
+    @apply block;
   }
 
   /* Animation Classes */
@@ -223,19 +243,19 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
+    animation: shimmer 3s linear infinite;
   }
 
   /* Glass Effect */
   .glass {
-    @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80;
-    @apply border border-white/20 dark:border-gray-700/30;
-    @apply rounded-xl;
+    @apply backdrop-blur-xl bg-white/60;   /* more blur, less opacity */
+    @apply border border-white/30;        /* subtle white border */
+    @apply rounded-2xl shadow-lg;
   }
 
   .glass-strong {
-    @apply backdrop-blur-xl bg-white/90 dark:bg-gray-900/90;
-    @apply border border-white/30 dark:border-gray-700/40;
+    @apply backdrop-blur-xl bg-white/90;
+    @apply border border-white/30;
     @apply rounded-xl;
     
     box-shadow: var(--shadow-soft);
@@ -318,3 +338,4 @@
     background-position: 200% 0;
   }
 }
+
