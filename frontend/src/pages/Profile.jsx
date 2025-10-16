@@ -138,6 +138,66 @@ const Profile = () => {
               ))
             }
           </div>
+
+          {activeTab === "profile" && (
+            <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-elegant">
+              <div className='flex flex-col space-y-1.5 p-6'>
+                <div className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                  <User className="h-5 w-5 text-[rgb(var(--primary))]" />
+                  Personal Information
+                </div>
+                <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                  Update your personal details and contact information.
+                </div>
+              </div>
+              <div className="p-6 pt-0 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className='text-sm font-medium leading-none ' htmlFor="full_name">Full Name</label>
+
+                    <input className="flex w-full h-10 rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      id="full_name"
+                      value={profile?.full_name || ""}
+                      onChange={(e) => updateProfile("full_name", e.target.value)}
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className='text-sm font-medium leading-none ' htmlFor="phone">Phone Number</label>
+                    <input className="flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="phone" value={profile?.phone || ""} onChange={(e) => updateProfile("phone", e.target.value)} placeholder="Enter your phone number"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className='text-sm font-medium leading-none' htmlFor="location">Location</label>
+                  <input className="flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="location"
+                    value={profile?.location || ""}
+                    onChange={(e) => updateProfile("location", e.target.value)}
+                    placeholder="Enter your location"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className='text-sm font-medium leading-none ' htmlFor="bio">Bio</label>
+                  <textarea className="flex w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="bio"
+                    value={profile?.bio || ""}
+                    onChange={(e) => updateProfile("bio", e.target.value)}
+                    placeholder="Tell us about yourself..."
+                    rows={4}
+                  />
+                </div>
+
+                <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 h-11 px-6 py-3 cursor-pointer border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95" onClick={handleSave} disabled={saving} >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          )
+          }
         </div>
       </div>
     </div>
