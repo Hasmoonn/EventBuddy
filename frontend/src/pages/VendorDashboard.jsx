@@ -271,6 +271,145 @@ const VendorDashboard = () => {
             </div>
           </div>
         </div>
+        <div className="space-y-6">
+          <div className="grid w-full grid-cols-4 bg-[rgba(var(--accent-foreground),0.2)] p-1 rounded-md text-[rgb(var(--muted-foreground))]">
+            {["profile", "bookings", "reviews", "analytics"].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition-all cursor-pointer
+                          ${activeTab === tab
+                    ? "bg-[rgb(var(--background))] text-[rgb(var(--foreground))] shadow-sm"
+                    : "text-[rgb(var(--muted-foreground))]"
+                  }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === "profile" && (
+            <div className="space-y-6">
+              {/* Profile content (same as your TabsContent for profile) */}
+              <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                <div className='flex justify-between items-center pr-6'>
+                  <div className='flex flex-col space-y-1.5 p-6'>
+                    <div className='text-2xl font-semibold leading-none tracking-tight text-gradient'>Business Profile</div>
+                    <div className='text-sm text-[rgb(var(--muted-foreground))]'>Manage your business information and settings</div>
+                  </div>
+
+                  <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-11 px-6 py-3  cursor-pointer' onClick={() => setIsEditing(!isEditing)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    {isEditing ? 'Cancel' : 'Edit Profile'}
+                  </button>
+                </div>
+
+                <div className="p-6 pt-0 space-y-6">
+                  {isEditing ? (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-medium">Business Name</label>
+                        <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' value={editForm.business_name} onChange={(e) => setEditForm({ ...editForm, business_name: e.target.value })} />
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium">Description</label>
+                        <textarea className='flex w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+                          value={editForm.description}
+                          onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                          rows={4}
+                        />
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium">Email</label>
+                          <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+                            type="email"
+                            value={editForm.contact_email}
+                            onChange={(e) => setEditForm({ ...editForm, contact_email: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium">Phone</label>
+                          <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+                            value={editForm.contact_phone}
+                            onChange={(e) => setEditForm({ ...editForm, contact_phone: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium">Min Price</label>
+                          <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+                            type="number"
+                            value={editForm.price_range_min}
+                            onChange={(e) => setEditForm({ ...editForm, price_range_min: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium">Max Price</label>
+                          <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+                            type="number"
+                            value={editForm.price_range_max}
+                            onChange={(e) => setEditForm({ ...editForm, price_range_max: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-11 py-3 px-6 cursor-pointer' onClick={updateVendorProfile}>
+                          Save Changes
+                        </button>
+
+                        <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-11 py-3 px-6 cursor-pointer' onClick={() => setIsEditing(false)}>
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-semibold">
+                          {vendorProfile.business_name}
+                        </h3>
+
+                        <p className="text-[rgb(var(--muted-foreground))]">
+                          {vendorProfile.description}
+                        </p>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-2">
+                            <Mail className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+                            <span>{vendorProfile.contact_email}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Phone className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+                            <span>{vendorProfile.contact_phone}</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-2">
+                            <MapPin className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+                            <span>{vendorProfile.location}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <DollarSign className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+                            <span>
+                              ${vendorProfile.price_range_min?.toLocaleString()} - ${vendorProfile.price_range_max?.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
