@@ -130,7 +130,6 @@ const Help = () => {
                 </div>
               </section>
 
-
               {/* FAQ Section */}
               <section>
                 <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
@@ -149,15 +148,56 @@ const Help = () => {
                 </div>
               </section>
             </div>
+
+
+             {/* Sidebar */}
+            <div className="space-y-8">
+              {/* Contact Support */}
+              <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                <div className='flex flex-col space-y-1.5 p-6'>
+                  <div className='text-2xl font-semibold leading-none tracking-tight'>Need More Help?</div>
+                  <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                    Our support team is here to assist you
+                  </div>
+                </div>
+                <div className="p-6 pt-0 space-y-4">
+                  {contactMethods.map((method, index) => (
+                    <div key={index} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-[rgba(var(--muted),0.5)] transition-all">
+                      <method.icon className="h-5 w-5 text-[rgb(var(--primary))] mt-1" />
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm">{method.title}</h4>
+                        <p className="text-sm text-[rgb(var(--muted-foreground))]">{method.description}</p>
+                        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all text-[rgb(var(--foreground))] mt-1">
+                          {method.available}
+                        </div>
+                        <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 h-9 px-4 py-2 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 w-full mt-2">
+                          {method.action}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                <div className='flex flex-col space-y-1.5 p-6'>
+                  <div className='text-2xl font-semibold leading-none tracking-tight'>System Status</div>
+                </div>
+                <div className='p-6 pt-0'>
+                  <div className="flex items-center space-x-2">
+                    <div className="h-3 w-3 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">All systems operational</span>
+                  </div>
+                  <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 text-[rgb(var(--primary))] underline-offset-4 hover:underline hover:scale-105 p-0 h-auto mt-2">
+                    View status page →
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
-
-
-
-
-
-
 
       <Footer />
     </div>
