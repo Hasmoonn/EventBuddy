@@ -528,6 +528,94 @@ const VendorDashboard = () => {
               </div>
             </div>
           )}
+          {activeTab === "analytics" && (
+            <div className="space-y-6">
+              {/* Analytics content */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                  <div className='flex flex-col space-y-1.5 p-6'>
+                    <div className='text-2xl font-semibold leading-none tracking-tight text-gradient'>
+                      Performance Metrics
+                    </div>
+                  </div>
+
+                  <div className='p-6 pt-0'>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Booking Conversion Rate
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          78%
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Average Response Time
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          2.5 hours
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Repeat Customer Rate
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>35%</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                  <div className='flex flex-col space-y-1.5 p-6'>
+                    <div className='text-2xl font-semibold leading-none tracking-tight text-gradient'>
+                      Monthly Trends
+                    </div>
+                  </div>
+
+                  <div className='p-6 pt-0'>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          This Month's Bookings
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]' >
+                          {Math.floor(analytics.totalBookings * 0.3)}
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Revenue Growth
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          +18%
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Profile Views
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          1,247
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
