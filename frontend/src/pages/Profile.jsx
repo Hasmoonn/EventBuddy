@@ -197,7 +197,45 @@ const Profile = () => {
               </div>
             </div>
           )
+          
           }
+          {activeTab === "account" && (
+            <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-elegant">
+              <div className='flex flex-col space-y-1.5 p-6'>
+                <div className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-[rgb(var(--primary))]" />
+                  Account Settings
+                </div>
+                <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                  Manage your account security and email preferences.
+                </div>
+              </div>
+              <div className="p-6 pt-0 space-y-6">
+                <div className="space-y-2">
+                  <label className='text-sm font-medium leading-none'>Email Address</label>
+
+                  <input className="flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--muted))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={user?.email || ""}
+                    disabled
+                  />
+
+                  <p className="text-sm text-muted-foreground">
+                    Contact support to change your email address.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className='text-sm font-medium leading-none'>Account Created</label>
+                  <input className="flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--muted))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : ""}
+                    disabled
+                  />
+                </div>
+              </div>
+            </div>
+          )
+          }
+
         </div>
       </div>
     </div>
