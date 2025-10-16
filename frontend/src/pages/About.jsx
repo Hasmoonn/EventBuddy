@@ -103,6 +103,68 @@ const About = () => {
           </div>
         </section>
 
+        {/* Team Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Meet Our Team
+              </h2>
+              <p className="text-[rgb(var(--muted-foreground))] max-w-2xl mx-auto">
+                Passionate professionals dedicated to transforming your event planning experience
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {
+                team.map((member, index) => (
+                  <div key={index} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm text-center">
+                    <div className='flex flex-col space-y-1.5 p-6'>
+                      <div className="h-20 w-20 gradient-primary rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <Users className="h-8 w-8 text-white" />
+                      </div>
+                      <div className="font-semibold leading-none tracking-tight text-lg">
+                        {member.name}
+                      </div>
+                      <p className="text-sm text-[rgb(var(--primary))] font-medium">{member.role}</p>
+                    </div>
+                    <div className='p-6 pt-0'>
+                      <p className="text-sm text-[rgb(var(--muted-foreground))] leading-relaxed">
+                        {member.bio}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 gradient-primary text-white">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Plan Your Perfect Event?
+            </h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              Join thousands of event planners who trust EventBuddy to make their celebrations extraordinary.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/auth">
+                <button className='inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-300 bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)] hover:scale-105 active:scale-95 h-12 rounded-xl px-8 py-3 cursor-pointer'>
+                  Get Started Free
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </button>
+              </Link>
+              <Link to="/vendors">
+                <button className="border-white text-white hover:bg-white hover:text-[rgb(var(--primary))] inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-300 border-2 bg-transparent hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-12 rounded-xl px-8 py-3 cursor-pointer">
+                  Explore Vendors
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
       </main>
 
     </div>
