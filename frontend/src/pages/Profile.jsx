@@ -111,9 +111,36 @@ const Profile = () => {
       </div>
     );
   }
-  
+
   return (
-    <div>Profile</div>
+    <div className="min-h-screen bg-gradient-to-br from-[rgb(var(--background))] to-[rgba(var(--accent),0.3)]">
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="mb-6">
+          <button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 h-11 px-6 py-3 cursor-pointer hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 mb-4" onClick={() => navigate("/dashboard")} >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </button>
+          <h1 className="text-4xl font-bold text-gradient mb-2">
+            Profile Settings
+          </h1>
+          <p className="text-[rgb(var(--muted-foreground))]">
+            Manage your account information and preferences
+          </p>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="grid w-full grid-cols-3 bg-[rgba(var(--accent-foreground),0.2)] p-1 rounded-md text-[rgb(var(--muted-foreground))] mb-6">
+            {
+              ["profile", "account", "vendor"].map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all cursor-pointer ${activeTab === tab ? "bg-[rgb(var(--background))] text-[rgb(var(--foreground))] shadow-sm" : "text-[rgb(var(--muted-foreground))]"}`} >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
