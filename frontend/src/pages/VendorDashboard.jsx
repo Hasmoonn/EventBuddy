@@ -409,6 +409,126 @@ const VendorDashboard = () => {
               </div>
             </div>
           )}
+
+          {activeTab === "bookings" && (
+            <div className="space-y-6">
+              {/* Bookings content */}
+              <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                <div className='flex flex-col space-y-1.5 p-6'>
+                  <div className='text-2xl font-semibold leading-none tracking-tight text-gradient'>Recent Bookings</div>
+                  <div className='text-sm text-[rgb(var(--muted-foreground))]'>Manage your booking requests and confirmations</div>
+                </div>
+                <div className='p-6 pt-0'>
+                  <div className="space-y-4">
+                    {bookings.map((booking) => (
+                      <div key={booking.id} className="p-4 border border-border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <h4 className="font-medium">{booking.events?.title}</h4>
+                            <p className="text-sm text-[rgb(var(--muted-foreground))]">
+                              by {booking.profiles?.full_name}
+                            </p>
+                          </div>
+                          <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${booking.status.toLowerCase() === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800' : booking.status.toLowerCase() === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'} `}>
+                            {booking.status}
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium">
+                              Service Date:
+                            </span>
+                            <p>
+                              {new Date(booking.booking_date).toLocaleDateString()}
+                            </p>
+                          </div>
+
+                          <div>
+                            <span className="font-medium">
+                              Amount:
+                            </span>
+                            <p>
+                              ${Number(booking.total_amount).toLocaleString()}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="font-medium">
+                              Service:
+                            </span>
+                            <p>
+                              {booking.service_description}
+                            </p>
+                          </div>
+                        </div>
+
+                        {booking.status.toLowerCase() === 'pending' && (
+                          <div className="flex space-x-2 mt-4">
+                            <button className='inline-flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-9 rounded-lg px-4 py-2 cursor-pointer'
+                              onClick={() => updateBookingStatus(booking.id, 'confirmed')}
+                            >
+                              Accept
+                            </button>
+
+                            <button className='inline-flex items-center justify-center transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 rounded-lg px-4 py-2 cursor-pointer'
+                              onClick={() => updateBookingStatus(booking.id, 'cancelled')}
+                            >
+                              Decline
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "reviews" && (
+            <div className="space-y-6">
+              {/* Reviews content */}
+              <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+                <div className='flex flex-col space-y-1.5 p-6'>
+                  <div className='text-2xl font-semibold leading-none tracking-tight text-gradient'>Customer Reviews</div>
+                  <div className='text-sm text-[rgb(var(--muted-foreground))]'>See what customers are saying about your services</div>
+                </div>
+                <div className='p-6 pt-0'>
+                  <div className="space-y-4">
+                    {reviews.map((review) => (
+                      <div key={review.id} className="p-4 border border-border rounded-lg">
+                        <div className="flex items-start space-x-4">
+                          <div className="h-10 w-10 gradient-primary rounded-full flex items-center justify-center">
+                            <span className="text-white font-medium">
+                              {review.profiles?.full_name?.[0]?.toUpperCase() || 'U'}
+                            </span>
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-medium">{review.profiles?.full_name}</h4>
+                              <div className="flex items-center space-x-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-4 w-4 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                                      }`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                            <p className="text-sm text-[rgb(var(--muted-foreground))]">{review.comment}</p>
+                            <p className="text-xs text-[rgb(var(--muted-foreground))] mt-2">
+                              {new Date(review.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
