@@ -189,7 +189,90 @@ const VendorDashboard = () => {
 
 
   return (
-    <div>VendorDashboard</div>
+    <div className='min-h-screen bg-gradient-to-br from-[rgb(var(--background))] to-[rgba(var(--accent),0.3)]'>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8 items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gradient">
+              Vendor Dashboard
+            </h1>
+            <p className="text-[rgb(var(--muted-foreground))]">
+              Manage your business and track performance
+            </p>
+          </div>
+
+          <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${vendorProfile.verified ? "border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]" : "border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]"}`} >
+            {vendorProfile.verified ? 'Verified' : 'Pending Verification'}
+          </div>
+        </div>
+
+        {/* Analytics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+            <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
+              <div className="text-sm font-medium">Total Bookings</div>
+              <Calendar className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+            </div>
+            <div className='p-6 pt-0'>
+              <div className="text-2xl font-bold">
+                {analytics.totalBookings}
+              </div>
+
+              <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
+                <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
+                +12% from last month
+              </div>
+            </div>
+          </div>
+
+          <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+            <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
+              <div className="leading-none tracking-tight text-sm font-medium">Total Revenue</div>
+              <DollarSign className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+            </div>
+            <div className='p-6 pt-0'>
+              <div className="text-2xl font-bold">${analytics.totalRevenue.toLocaleString()}</div>
+              <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
+                <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
+                +18% from last month
+              </div>
+            </div>
+          </div>
+
+          <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+            <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
+              <div className="leading-none tracking-tight text-sm font-medium">
+                Average Rating
+              </div>
+              <Star className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
+            </div>
+
+            <div className='p-6 pt-0'>
+              <div className="text-2xl font-bold">
+                {analytics.averageRating}/5
+              </div>
+              <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
+                <span>{reviews.length} reviews</span>
+              </div>
+            </div>
+          </div>
+
+          <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
+            <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
+              <div className="leading-none tracking-tight text-sm font-medium">Response Rate</div>
+              <MessageSquare className="h-4 w-4 text[rgb(var(--muted-foreground))]" />
+            </div>
+            <div className='p-6 pt-0'>
+              <div className="text-2xl font-bold">{analytics.responseRate}%</div>
+              <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
+                <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
+                Above average
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
