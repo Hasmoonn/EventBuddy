@@ -79,7 +79,85 @@ const Help = () => {
             </div>
           </div>
         </section>
+
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="grid lg:grid-cols-3 gap-12">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-12">
+              {/* Quick Links */}
+              <section>
+                <h2 className="text-2xl font-bold mb-6">Popular Topics</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-hover cursor-pointer">
+                    <div className='flex flex-col space-y-1.5 p-6'>
+                      <Book className="h-8 w-8 text-[rgb(var(--primary))] mb-2" />
+                      <div className='text-2xl font-semibold leading-none tracking-tight'>Getting Started Guide</div>
+                      <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                        Complete walkthrough for new users
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-hover cursor-pointer">
+                    <div className='flex flex-col space-y-1.5 p-6'>
+                      <Video className="h-8 w-8 text-[rgb(var(--primary))] mb-2" />
+                      <div className='text-2xl font-semibold leading-none tracking-tight'>Video Tutorials</div>
+                      <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                        Step-by-step video guides
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-hover cursor-pointer">
+                    <div className='flex flex-col space-y-1.5 p-6'>
+                      <Users className='h-8 w-8 text-[rgb(var(--primary))] mb-2' />
+                      <div className='text-2xl font-semibold leading-none tracking-tight'>Vendor Management</div>
+                      <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                        How to work with vendors effectively
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-hover cursor-pointer">
+                    <div className='flex flex-col space-y-1.5 p-6'>
+                      <MessageCircle className="h-8 w-8 text-[rgb(var(--primary))] mb-2" />
+                      <div className='text-2xl font-semibold leading-none tracking-tight'>Billing & Payments</div>
+                      <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                        Understanding costs and payments
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+
+              {/* FAQ Section */}
+              <section>
+                <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+                <div className="space-y-4">
+                  {faqs.map((faq, index) => (
+                    <div key={index} className="border border-purple-300 rounded-lg px-6 shadow-sm">
+                      <button onClick={() => toggleAccordion(index)} className="w-full flex justify-between items-center py-4 font-semibold text-left cursor-pointer"  >
+                        {faq.question}
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${openIndex === index ? "rotate-180" : ""}`} />
+                      </button>
+                      {openIndex === index && (
+                        <div className="pb-4 text-[rgb(var(--muted-foreground))]">{faq.answer}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
       </main>
+
+
+
+
+
+
 
       <Footer />
     </div>
