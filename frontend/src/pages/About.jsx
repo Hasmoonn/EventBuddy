@@ -52,6 +52,57 @@ const About = () => {
             </div>
           </div>
         </section>
+
+
+        {/* Mission Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center space-y-8">
+              <h2 className="text-3xl md:text-4xl font-bold">
+                Our Mission
+              </h2>
+              <p className="text-xl leading-relaxed">
+                To democratize exceptional event planning by connecting people with trusted vendors
+                and providing AI-powered tools that turn stress into success. Every celebration
+                deserves to be perfect, regardless of budget or experience.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Values Section */}
+        <section className="py-16 bg-[rgba(var(--muted),0.6)]">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Our Values
+              </h2>
+              <p className="text-[rgb(var(--muted-foreground))]  max-w-2xl mx-auto">
+                The principles that guide everything we do
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {
+                values.map((value, index) => (
+                  <div key={index} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm text-center h-full">
+                    <div className='flex flex-col space-y-1.5 p-6'>
+                      <div className="font-semibold leading-none tracking-tight text-lg">
+                        {value.title}
+                      </div>
+                    </div>
+                    <div className='p-6 pt-0'>
+                      <p className="text-sm text-[rgb(var(--muted-foreground))] leading-relaxed">
+                        {value.description}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+
       </main>
 
     </div>
