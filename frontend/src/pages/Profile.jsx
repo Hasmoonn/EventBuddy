@@ -197,7 +197,7 @@ const Profile = () => {
               </div>
             </div>
           )
-          
+
           }
           {activeTab === "account" && (
             <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-elegant">
@@ -231,6 +231,54 @@ const Profile = () => {
                     disabled
                   />
                 </div>
+              </div>
+            </div>
+          )
+          }
+
+          {activeTab === "vendor" && (
+            <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-elegant">
+              <div className='flex flex-col space-y-1.5 p-6'>
+                <div className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-[rgb(var(--primary))]" />
+                  Vendor Settings
+                </div>
+                <div className='text-sm text-[rgb(var(--muted-foreground))]'>
+                  Configure your vendor account to offer services on EventBuddy.
+                </div>
+              </div>
+              <div className="p-6 pt-0 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <label className='text-base font-medium leading-none' >Enable Vendor Account</label>
+                    <p className="text-sm text-[rgb(var(--muted-foreground))]">
+                      Allow others to book your services for their events.
+                    </p>
+                  </div>
+                  <input type='checkbox'
+                    checked={profile?.is_vendor || false}
+                    onCheckedChange={(checked) => updateProfile("is_vendor", checked)}
+                  />
+                </div>
+
+                {profile?.is_vendor && (
+                  <div className="p-4 bg-[rgba(var(--primary),0.1)] rounded-lg border border-[rgba(var(--primary),0.2)]">
+                    <p className="text-sm text-[rgb(var(--primary))]">
+                      <strong>Vendor account enabled!</strong> You can now create your vendor profile
+                      and start receiving bookings from the Vendors page.
+                    </p>
+
+                    <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 h-11 px-6 py-3 cursor-pointer border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 mt-2"
+                      onClick={() => navigate("/vendors")}
+                    >
+                      Manage Vendor Profile
+                    </button>
+                  </div>
+                )}
+
+                <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 h-11 px-6 py-3 cursor-pointer bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95" onClick={handleSave} disabled={saving}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
               </div>
             </div>
           )
