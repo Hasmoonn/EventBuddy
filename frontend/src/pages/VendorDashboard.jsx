@@ -103,6 +103,91 @@ const VendorDashboard = () => {
     }
   };
 
+  const updateVendorProfile = async () => {
+    try {
+      // const { data: { user } } = await supabase.auth.getUser();
+      // if (!user || !vendorProfile) return;
+
+      // const { error } = await supabase
+      //   .from('vendors')
+      //   .update({
+      //     business_name: editForm.business_name,
+      //     description: editForm.description,
+      //     services: editForm.services,
+      //     contact_email: editForm.contact_email,
+      //     contact_phone: editForm.contact_phone,
+      //     website_url: editForm.website_url,
+      //     price_range_min: editForm.price_range_min ? Number(editForm.price_range_min) : null,
+      //     price_range_max: editForm.price_range_max ? Number(editForm.price_range_max) : null
+      //   })
+      //   .eq('id', vendorProfile.id);
+
+      // if (error) throw error;
+
+      setIsEditing(false);
+      fetchVendorData();
+
+      // toast({
+      //   title: "Profile Updated",
+      //   description: "Your vendor profile has been updated successfully",
+      // });
+    } catch (error) {
+      toast.error(error.message)
+    }
+  };
+
+  const updateBookingStatus = async (bookingId, status) => {
+    try {
+      // const { error } = await supabase
+      //   .from('bookings')
+      //   .update({ status })
+      //   .eq('id', bookingId);
+
+      // if (error) throw error;
+
+      // setBookings(prev => 
+      //   prev.map(b => b.id === bookingId ? { ...b, status } : b)
+      // );
+
+      // toast({
+      //   title: "Booking Updated",
+      //   description: `Booking ${status} successfully`,
+      // });
+    } catch (error) {
+      toast.error(error.message)
+    }
+  };
+
+  // const getStatusColor = (status) => {
+  //   switch (status) {
+  //     case 'confirmed': return 'bg-green-100 text-green-800';
+  //     case 'pending': return 'bg-yellow-100 text-yellow-800';
+  //     case 'cancelled': return 'bg-red-100 text-red-800';
+  //     default: return 'bg-gray-100 text-gray-800';
+  //   }
+  // };
+
+  if (!vendorProfile) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm' >
+          <div className="p-8 text-center">
+            <Building className="h-12 w-12 mx-auto mb-4 text-[rgb(var(--muted-foreground))]" />
+            <h2 className="text-xl font-semibold mb-2">Create Your Vendor Profile</h2>
+            <p className="text-[rgb(var(--muted-foreground))] mb-4">
+              Set up your vendor profile to start receiving bookings
+            </p>
+
+            <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-11 px-6 py-3'>
+              Create Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div>VendorDashboard</div>
   )
