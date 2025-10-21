@@ -360,6 +360,9 @@ export const users = [
     full_name: "John Doe",
     email: "john.doe@example.com",
     phone: "+94771234567",
+    bio: "A vendor specializing in electronics.",  
+    location: "Colombo, Sri Lanka",              
+    avatar_url: "https://example.com/avatars/john_doe.jpg", 
     is_vendor: true
   },
   {
@@ -367,6 +370,9 @@ export const users = [
     full_name: "Sophia Silva",
     email: "sophia.silva@example.com",
     phone: "+94776543210",
+    bio: "Handmade crafts artisan.",             
+    location: "Kandy, Sri Lanka",               
+    avatar_url: "https://example.com/avatars/sophia_silva.jpg", 
     is_vendor: true
   },
   {
@@ -374,9 +380,41 @@ export const users = [
     full_name: "Michael Perera",
     email: "michael.perera@example.com",
     phone: "+94778889999",
+    bio: "Regular customer and tech enthusiast.", 
+    location: "Galle, Sri Lanka",                
+    avatar_url: "https://example.com/avatars/michael_perera.jpg", 
     is_vendor: false
   }
 ];
+
+// notifications
+export const notificationSettings = [
+  {
+    _id: "N001",
+    user_id: "U001",
+    email_bookings: true,
+    email_reminders: true,
+    sms_notifications: true,
+    marketing_emails: false
+  },
+  {
+    _id: "N002",
+    user_id: "U002",
+    email_bookings: true,
+    email_reminders: false,
+    sms_notifications: false,
+    marketing_emails: true
+  },
+  {
+    _id: "N003",
+    user_id: "U003",
+    email_bookings: false,
+    email_reminders: true,
+    sms_notifications: true,
+    marketing_emails: false
+  }
+]
+
 
 export const eventsData = [
   {
@@ -541,6 +579,7 @@ export const upcomingEventsData = [
     status: "Planning"
   }
 ];
+
 
 export const recentActivitiesData = [
   {
