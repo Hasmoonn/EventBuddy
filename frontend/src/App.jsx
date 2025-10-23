@@ -17,6 +17,7 @@ import About from './pages/About'
 import Help from './pages/Help'
 import AdminPanel from './pages/AdminPanel'
 import VendorDashboard from './pages/VendorDashboard'
+import ResetPassword from './pages/ResetPassword'
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Index />} /> 
         <Route path='/auth' element={<Auth />} /> 
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/dashboard' element={<Dashboard />} /> 
         <Route path='/vendors' element={<Vendors />} /> 
         <Route path='/vendors/:id' element={<VendorProfile />} /> 
