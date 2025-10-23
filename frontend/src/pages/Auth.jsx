@@ -1,31 +1,44 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Calendar, Mail, Sparkles, User, Lock } from 'lucide-react'
+import { ArrowLeft, Calendar, Mail, Sparkles, User, Lock, Briefcase } from 'lucide-react'
+import { AuthContext } from '../contexts/AuthContext'
+import axios from 'axios'
+import { HashLoader } from "react-spinners";
 
 const Auth = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [user, setUser ] = useState()
-  const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [isVendor, setIsVendor] = useState(false);
+  const {backendUrl, navigate, setIsAuthenticated, loading, setLoading, user, setUser} = useContext(AuthContext);
 
-  const [activeTab, setActiveTab] = useState("signin");
+  const [activeTab, setActiveTab] = useState("signup");
 
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
+    if (!loading) {   
+      if (user) {
+        navigate('/dashboard'); 
+      }
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      
+      const {data} = await axios.post(backendUrl + '/api/auth/login', {email, password})
+
+      if (data.success) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        navigate('/dashboard');
+        toast.success(`User Logged In successfully.`)
+      } else{
+          toast.error(data.message)
+      }
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -38,7 +51,16 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      
+      const {data} = await axios.post(backendUrl + '/api/auth/register', {name, email, password, is_vendor: isVendor})
+
+      if (data.success) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        navigate('/dashboard');
+        toast.success(`User Registered Successfully.`)
+      } else{
+          toast.error(data.message)
+      }
     } catch (error) {
         toast.error(error.message)
 
@@ -46,6 +68,14 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[rgb(var(--background))] to-[rgba(var(--accent-foreground),0.3)] flex items-center justify-center p-4">
@@ -134,6 +164,16 @@ const Auth = () => {
                       required
                     />
                   </div>
+
+                  {
+                    activeTab === 'signin' && (
+                      <div className='mb-4 flex justify-end'>
+                        <Link to='/reset-password' >
+                          <p className='text-purple-500 hover:underline transition-all font-medium'>Forgot Password?</p>
+                        </Link>
+                      </div>
+                    )
+                  }
                   
                   <button type="submit" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 w-full btn-hero" disabled={loading}
                   >
@@ -155,8 +195,8 @@ const Auth = () => {
                       id="signup-name"
                       type="text"
                       placeholder="Enter your full name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       required
                     />
                   </div>
@@ -190,6 +230,21 @@ const Auth = () => {
                       required
                     />
                   </div>
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      id="is-vendor"
+                      type="checkbox"
+                      checked={isVendor}
+                      onChange={(e) => setIsVendor(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 focus:ring-2 focus:ring-[rgb(var(--ring))]"
+                    />
+
+                    <label htmlFor="is-vendor" className="flex items-center text-sm font-medium leading-none cursor-pointer">
+                      <Briefcase className="h-4 w-4 mr-2 text-[rgb(var(--primary))]" />
+                      Register as Vendor
+                    </label>
+                  </div>
                   
                   <button type="submit" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 w-full btn-hero" disabled={loading} >
                     {loading ? "Creating Account..." : "Create Account"}
@@ -197,6 +252,25 @@ const Auth = () => {
                 </form>
               )
             }
+          </div>
+
+          <div className='text-center mb-4'>
+            <p className='text-sm text-gray-600'>
+              {
+                activeTab === 'signin' ? "Don't have an account?" : "Already have an account?"
+              }{' '}
+              <button onClick={() => {
+                  if (activeTab === 'signin') {
+                    setActiveTab('signup')
+                  } else{
+                    setActiveTab('signin')
+                  }
+                ; scrollTo(0,0)} } className='font-medium hover:text-purple-500 cursor-pointer hover:underline'>
+                {
+                  activeTab === 'signin' ? "Sign up" : "Sign in" 
+                }
+              </button>
+            </p>
           </div>
         </div>
 
