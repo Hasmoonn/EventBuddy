@@ -1,34 +1,6 @@
 import { Award, Brain, Calendar, Camera, Car, CreditCard, Heart, MapIcon, MessageCircle, Music, Palette, Search, Shield, Star, Target, Users, Utensils } from 'lucide-react'
 
 
-export const mockNotifications = [
-  {
-    id: '1',
-    type: 'booking_confirmation',
-    message: 'Your booking with Golden Gate Catering has been confirmed',
-    read_status: false,
-    created_at: new Date().toISOString(),
-    user_id: 'user1'
-  },
-  {
-    id: '2',
-    type: 'payment_reminder',
-    message: 'Payment due for your photography service in 3 days',
-    read_status: false,
-    created_at: new Date(Date.now() - 3600000).toISOString(),
-    user_id: 'user1'
-  },
-  {
-    id: '3',
-    type: 'event_reminder',
-    message: 'Your wedding is coming up in 2 weeks!',
-    read_status: true,
-    created_at: new Date(Date.now() - 7200000).toISOString(),
-    user_id: 'user1'
-  }
-];
-
-
 export const features = [
   {
     icon: Brain,
@@ -89,69 +61,7 @@ export const features = [
 ];
 
 
-// export const vendors = [
-//   {
-//     id: 1,
-//     name: "Elegant Events Photography",
-//     category: "Photography",
-//     rating: 4.9,
-//     reviews: 127,
-//     location: "New York, NY",
-//     price: "$1,200-$3,500",
-//     image: "/placeholder.svg",
-//     icon: Camera,
-//     available: true,
-//     verified: true,
-//     specialties: ["Wedding", "Corporate", "Portrait"]
-//   },
-//   {
-//     id: 2,
-//     name: "Gourmet Catering Co.",
-//     category: "Catering",
-//     rating: 4.8,
-//     reviews: 89,
-//     location: "Los Angeles, CA",
-//     price: "$35-$85/person",
-//     image: "/placeholder.svg",
-//     icon: Utensils,
-//     available: true,
-//     verified: true,
-//     specialties: ["Fine Dining", "BBQ", "Vegan"]
-//   },
-//   {
-//     id: 3,
-//     name: "Harmony Music Events",
-//     category: "Entertainment",
-//     rating: 5.0,
-//     reviews: 64,
-//     location: "Chicago, IL",
-//     price: "$800-$2,200",
-//     image: "/placeholder.svg",
-//     icon: Music,
-//     available: false,
-//     verified: true,
-//     specialties: ["Live Band", "DJ", "Classical"]
-//   },
-//   {
-//     id: 4,
-//     name: "Creative Decor Studio",
-//     category: "Decoration",
-//     rating: 4.7,
-//     reviews: 156,
-//     location: "Miami, FL",
-//     price: "$500-$1,800",
-//     image: "/placeholder.svg",
-//     icon: Palette,
-//     available: true,
-//     verified: true,
-//     specialties: ["Floral", "Lighting", "Themes"]
-//   }
-// ];
-
-
 // about 
-
-
 export const stats = [
   { number: "10K+", label: "Events Planned", icon: Target },
   { number: "500+", label: "Trusted Vendors", icon: Users },
@@ -414,6 +324,33 @@ export const notificationSettings = [
     marketing_emails: false
   }
 ]
+
+export const mockNotifications = [
+  {
+    id: '1',
+    type: 'booking_confirmation',
+    message: 'Your booking with Golden Gate Catering has been confirmed',
+    read_status: false,
+    created_at: new Date().toISOString(),
+    user_id: 'user1'
+  },
+  {
+    id: '2',
+    type: 'payment_reminder',
+    message: 'Payment due for your photography service in 3 days',
+    read_status: false,
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+    user_id: 'user1'
+  },
+  {
+    id: '3',
+    type: 'event_reminder',
+    message: 'Your wedding is coming up in 2 weeks!',
+    read_status: true,
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+    user_id: 'user1'
+  }
+];
 
 
 export const eventsData = [
