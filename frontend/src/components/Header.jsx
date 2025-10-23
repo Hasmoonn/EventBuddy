@@ -1,16 +1,48 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Calendar, LogOut, Menu, Sparkles, User, X } from 'lucide-react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import NotificationCenter from './NotificationCenter'
+import { AuthContext } from '../contexts/AuthContext'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { HashLoader } from 'react-spinners'
+
 
 const Header = () => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [user, setUser] = useState(true)
-  const navigate = useNavigate()
+  const {backendUrl, navigate, isAuthenticated, setIsAuthenticated, loading, setLoading, user, setUser} = useContext(AuthContext);
+
 
   const handleLogout = async () => {
-    navigate('/auth')
+    setLoading(true)
+
+    try {
+      const {data} = await axios.post(backendUrl + "/api/auth/logout")
+
+      if (data.success) {
+        toast.success(data.message)
+        setUser(null)
+        setIsAuthenticated(false)
+        navigate('/auth')
+      } else {
+        return toast.error(data.message)
+      }
+      
+    } catch (error) {
+      console.log(error.message);
+      toast.error(data.message)
+    } finally{
+      setLoading(false)
+    }   
+  }
+
+  if (loading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
+    );
   }
 
   return (
@@ -28,7 +60,7 @@ const Header = () => {
               <h1 className="text-md sm:text-xl font-bold text-gradient">
                 EventBuddy
               </h1>
-              <div className="rounded-full px-2 py-0.5 text-[10px] sm:text-xs border-transparent font-semibold bg-[rgb(var(--secondary))] transition-all text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.6)]">
+              <div className="flex justify-center rounded-full px-2 py-0.5 text-[10px] sm:text-xs border-transparent font-semibold bg-[rgb(var(--secondary))] transition-all text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.6)]">
                 Smart Planning
               </div>
             </div>
@@ -54,7 +86,7 @@ const Header = () => {
 
           <div className='flex items-center gap-x-4'>
             {
-              user ? (
+              user && isAuthenticated ? (
                 <div className='flex items-center gap-x-2 sm:gap-x-4'>
                   <NotificationCenter />
 
@@ -112,7 +144,7 @@ const Header = () => {
                   Dashboard
                 </Link>
 
-                {!user && (
+                {!user && !isAuthenticated && (
                   <div className="pt-2">
                     <Link to="/auth">
                       <div className="btn-hero text-sm inline-flex items-center">
