@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   location: { type: String },
   avatar_url: { type: String, default: '' },
   is_vendor: { type: Boolean, default: false },
+  is_active: { type: Boolean, default: true },
   resetOtp: {type: String, default: ''},
   resetOtpExpireAt: {type: Number, default: 0},
 }, { timestamps: true });
