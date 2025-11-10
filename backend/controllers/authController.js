@@ -62,6 +62,7 @@ export const registerUser = async (req, res) => {
     await transporter.sendMail(mailOptions);
 
     res.json({ success: true, token, user: {
+      _id: user._id,
       name:user.name,
       email:user.email,
       is_vendor: user.is_vendor
@@ -88,7 +89,11 @@ export const loginUser = async (req, res) => {
 
     if (!user) {
       return res.json({success: false, message: "user does not exist"})
-    }   
+    }
+
+    if (!user.is_active) {
+      return res.json({success: false, message: "Account is deactivated"})
+    }
 
     const isMatch = await bcrypt.compare(password, user.password)
 
@@ -137,15 +142,15 @@ export const logout = async (req, res) => {
 }
 
 
-// admin login 
+// admin login
 export const adminLogin = async (req, res) => {
 
   try {
-    
+
     const {email, password} = req.body
 
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign(email+password, process.env.JWT_SECRET)
+      const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' })
 
       res.json({success: true, token})
     } else {
@@ -164,8 +169,10 @@ export const isAuthenticated = async (req, res) => {
     const user = req.user;
 
     return res.json({ success: true, user: {
+      _id: user._id,
       name: user.name,
       email: user.email,
+      is_vendor: user.is_vendor,
     }
    }) // changed
   } catch (error) {
