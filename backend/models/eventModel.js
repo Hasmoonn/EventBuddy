@@ -9,7 +9,7 @@ const eventSchema = new mongoose.Schema({
   event_date: { type: Date, required: true },
   guest_count: { type: Number },
   budget: { type: Number },
-  status: { type: String, enum: ['draft', 'planning', 'confirmed', 'completed'], default: 'draft' },
+  status: { type: String, enum: ['draft', 'planning', 'confirmed', 'completed', 'cancelled'], default: 'draft' },
 }, { timestamps: true });
 
 
