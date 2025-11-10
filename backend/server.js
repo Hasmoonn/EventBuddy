@@ -5,6 +5,13 @@ import cookieParser from 'cookie-parser'
 import connectDB from "./config/mongodb.js"
 import connectCloudinary from './config/cloudinary.js'
 import authRouter from './routes/authRoutes.js'
+import vendorRouter from './routes/vendorRoutes.js'
+import profileRouter from './routes/profileRoutes.js'
+import eventRouter from './routes/eventRoutes.js'
+import bookingRoutes from "./routes/bookingRoutes.js";
+import guestRouter from "./routes/guestRoutes.js";
+import reviewRouter from "./routes/reviewRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
 
 
 const app = express();
@@ -23,6 +30,13 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth', authRouter);
+app.use('/api/vendors', vendorRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/events", eventRouter);
+app.use("/api/guests", guestRouter);
+app.use("/api/reviews", reviewRouter);
+app.use("/api/admin", adminRouter);
 
 
 app.listen(port, () => {
