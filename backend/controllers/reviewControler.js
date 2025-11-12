@@ -27,8 +27,27 @@ export const getVendorReviews = async (req, res) => {
             success: true,
             reviews: reviews || []
         });
-    }catch(error) {
+    } catch (error) {
         console.error('Error fetching vendor reviews:', error);
-        res.json({success: false, massage: error.massage});
+        res.json({ success: false, massage: error.massage });
     }
 };
+
+// Submit a new review
+export const submitReview = async (req, res) => {
+    try {
+        const { booking_id, rating, comment } = req.body;
+        const user_id = req.body.user_id;
+
+        //Verify booking exists and belongs to user
+        const booking = await bookingModel.findOne({_id: booking_id, user_id: user_id});
+        if(!booking){
+            return res.json({success: false, massage:'Booking not found or does not belong to user'});
+        }
+
+    }catch(error){
+        console.error('Error submitting review:', error);
+        res.json({success: false, massage: error.massage});
+    }
+   
+}
