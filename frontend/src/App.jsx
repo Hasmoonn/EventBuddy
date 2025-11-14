@@ -17,7 +17,7 @@ import About from './pages/About'
 import Help from './pages/Help'
 import AdminPanel from './pages/AdminPanel'
 import VendorDashboard from './pages/VendorDashboard'
-import VendorPageForm from './pages/VendorPageForm'
+import VendorProfileForm from './pages/VendorPageForm'
 
 const App = () => {
   return (
@@ -46,8 +46,8 @@ const App = () => {
         <Route path='/press' element={<About />} /> 
         <Route path='/privacy' element={<Help />} /> 
         <Route path='/terms' element={<Help />} /> 
-        <Route path='/cookies' element={<Help />} /> 
-        <Route path='/form' element={<VendorPageForm />} />
+        <Route path='/cookies' element={<Help />} />
+        <Route path='/vendor-profile-form' element={<VendorProfileForm />} /> 
         <Route path='*' element={<NotFound />} /> 
       </Routes>
     </div>
