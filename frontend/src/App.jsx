@@ -18,6 +18,7 @@ import Help from './pages/Help'
 import AdminPanel from './pages/AdminPanel'
 import VendorDashboard from './pages/VendorDashboard'
 import ResetPassword from './pages/ResetPassword'
+import VendorProfileForm from './pages/VendorProfileForm'
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/dashboard' element={<Dashboard />} /> 
         <Route path='/vendors' element={<Vendors />} /> 
+        <Route path='/vendor/create-vendor' element={<VendorProfileForm />} /> 
         <Route path='/vendors/:id' element={<VendorProfile />} /> 
         <Route path='/create-event' element={<CreateEvent />} /> 
         <Route path='/events/:id' element={<EventDetails />} /> 
