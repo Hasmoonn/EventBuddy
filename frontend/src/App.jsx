@@ -17,7 +17,7 @@ import About from './pages/About'
 import Help from './pages/Help'
 import AdminPanel from './pages/AdminPanel'
 import VendorDashboard from './pages/VendorDashboard'
-import VendorProfileForm from './pages/VendorPageForm'
+import VendorProfileForm from './pages/VendorProfileForm'
 
 const App = () => {
   return (
