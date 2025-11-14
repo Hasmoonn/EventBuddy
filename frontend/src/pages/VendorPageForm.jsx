@@ -43,6 +43,17 @@ const VendorProfileForm = () => {
     }
   };
 
+  const handlePortfolioImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setPortfolioImages(prev => [...prev, ...files]);
+    }
+  };
+
+  const removePortfolioImage = (index) => {
+    setPortfolioImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
