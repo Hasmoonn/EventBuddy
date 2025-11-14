@@ -140,7 +140,16 @@ const VendorProfileForm = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1>Vendor Profile Form</h1>
+        {/* Header Card */}
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 text-white shadow-xl mb-8">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <TicketMinus className="h-8 w-8 text-purple-600" />
+            </div>
+            <h1 className="text-3xl font-bold mb-2">Complete Your Vendor Profile</h1>
+            <p className="text-purple-100 opacity-90">Showcase your services and connect with clients</p>
+          </div>
+        </div>
       </div>
     </div>
   );
