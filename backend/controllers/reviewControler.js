@@ -112,3 +112,25 @@ export const editReview = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
+// Delete a review
+export const deleteReview = async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+        const userId = req.body.userId;
+
+        // Find the review and ensure it belongs to the user
+        const review = await reviewModel.findOne({ _id: reviewId, user_id: userId });
+        if (!review) {
+            return res.json({ success: false, message: 'Review not found or does not belong to user' });
+        }
+
+        // Delete the review
+        await reviewModel.findByIdAndDelete(reviewId);
+
+        res.json({ success: true, message: 'Review deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.json({ success: false, message: error.message });
+    }
+};
