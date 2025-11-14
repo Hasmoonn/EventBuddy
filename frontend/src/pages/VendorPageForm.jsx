@@ -54,6 +54,29 @@ const VendorProfileForm = () => {
     setPortfolioImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const uploadProfileImage = async (vendorId) => {
+    if (!profileImage) 
+      return null;
+
+    const formData = new FormData();
+    formData.append('image', profileImage);
+
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/vendors/upload-image`,
+        formData,
+        { 
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }
+      );
+      return data.data.image;
+    } catch (error) {
+      console.error("Profile image upload failed:", error);
+      return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
