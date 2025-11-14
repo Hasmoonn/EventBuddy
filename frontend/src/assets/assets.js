@@ -97,19 +97,23 @@ export const team = [
 export const values = [
   {
     title: "Reliability",
-    description: "We connect you only with verified, trusted vendors who deliver exceptional service."
+    description: "We connect you only with verified, trusted vendors who deliver exceptional service.",
+    icon: Shield
   },
   {
     title: "Innovation",
-    description: "Our AI-powered platform continuously evolves to make event planning smarter and easier."
+    description: "Our AI-powered platform continuously evolves to make event planning smarter and easier.",
+    icon: Brain
   },
   {
     title: "Community",
-    description: "We foster a supportive ecosystem where planners and vendors grow together."
+    description: "We foster a supportive ecosystem where planners and vendors grow together.",
+    icon: Users
   },
   {
     title: "Excellence",
-    description: "Every event matters. We're committed to helping you create unforgettable experiences."
+    description: "Every event matters. We're committed to helping you create unforgettable experiences.",
+    icon: Star
   }
 ];
 
