@@ -1,34 +1,48 @@
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
-import { vendors } from '../assets/assets';
+import { useParams } from 'react-router-dom';
 import BookingDialog from '../components/BookingDialog';
 import { ArrowLeft, Calendar, Mail, MapPin, MessageCircle, Phone, Shield, Star } from 'lucide-react';
 import ReviewList from '../components/ReviewList';
+import ReviewForm from '../components/ReviewForm';
+import axios from 'axios';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 const VendorProfile = () => {
 
   const { id } = useParams();
-  const navigate = useNavigate();
+
+  const {backendUrl, loading, setLoading, navigate} = useContext(AuthContext);
   
   const [vendor, setVendor] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [showBookingDialog, setShowBookingDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState("portfolio"); // 👈 Simple tab system
+  const [activeTab, setActiveTab] = useState("portfolio");
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [reviewKey, setReviewKey] = useState(0);
 
 
   const fetchVendor = async () => {
+    setLoading(true)
+
     if (!id) 
       return;
     
     try {
-      const foundVendor = vendors.find((v) => v.id === id);
-      setVendor(foundVendor || null);
+      const {data} = await axios.get(backendUrl + `/api/vendors/${id}`, { credentials: "include" });
+
+      if (data.success) {
+        setVendor(data.vendor || null);
+      } else {
+        toast.error(data.message);
+        navigate("/vendors");
+      }
     } catch (error) {
       toast.error(error.message)
       navigate("/vendors");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
@@ -46,7 +60,7 @@ const VendorProfile = () => {
 
   const formatPrice = (min, max) => {
     if (min && max) {
-      return `$ ${min.toLocaleString()} - $ ${max.toLocaleString()}`;
+      return `LKR ${min.toLocaleString()} - LKR ${max.toLocaleString()}`;
     }
     return "Contact for pricing";
   };
@@ -80,7 +94,7 @@ const VendorProfile = () => {
             Vendor not found
           </h2>
 
-          <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300' onClick={() => navigate("/vendors")}>
+          <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer px-3 py-2 bg-purple-400 text-white hover:bg-purple-500 hover:shadow-md' onClick={() => navigate("/vendors")}>
             Browse All Vendors
           </button>
         </div>
@@ -105,7 +119,7 @@ const VendorProfile = () => {
               <div className="p-6 pt-3">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16">
-                    <img src={vendor.image} className='aspect-square h-full w-full' />
+                    <img src={vendor.image} className='w-full object-cover' />
                   </div>
                   
                   <div className="flex-1">
@@ -228,8 +242,15 @@ const VendorProfile = () => {
               </div>
               
               {activeTab === "reviews" && (
-                <ReviewList vendorId={vendor.id} />
+                <div key={reviewKey}>
+                  <ReviewList
+                    vendorId={vendor._id}
+                    onShowReviewForm={() => setShowReviewForm(true)}
+                    onEditReview={(review) => setEditingReview(review)}
+                  />
+                </div>
               )}
+              
             </div>
           </div>
 
@@ -296,6 +317,30 @@ const VendorProfile = () => {
       </div>
 
       <BookingDialog vendor={vendor} open={showBookingDialog} onClose={() => setShowBookingDialog(false)} />
+
+      {showReviewForm && (
+        <ReviewForm
+          vendorId={vendor._id}
+          review={null}
+          onClose={() => setShowReviewForm(false)}
+          onSuccess={() => {
+            setShowReviewForm(false);
+            setReviewKey(prev => prev + 1);
+          }}
+        />
+      )}
+
+      {editingReview && (
+        <ReviewForm
+          vendorId={vendor._id}
+          review={editingReview}
+          onClose={() => setEditingReview(null)}
+          onSuccess={() => {
+            setEditingReview(null);
+            setReviewKey(prev => prev + 1);
+          }}
+        />
+      )}
     </div>
   )
 }
