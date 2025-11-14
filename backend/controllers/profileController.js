@@ -17,3 +17,21 @@ export const getProfile = async (req, res) => {
         res.json({ success: false, message: "Server error" });
     }
 };
+
+// Update profile
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { name, phone, bio, location, is_vendor } = req.body;
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            { name, phone, bio, location, is_vendor },
+            { new: true, runValidators: true }).select("-password");
+
+        res.json({ success: true, message: "Profile updated successfully", user: updatedUser });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
