@@ -26,6 +26,10 @@ const VendorProfileForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
 
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value});
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
