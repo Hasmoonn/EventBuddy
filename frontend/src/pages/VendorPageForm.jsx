@@ -99,6 +99,43 @@ const VendorProfileForm = () => {
       console.error("Portfolio images upload failed:", error);
     }
   };
+ 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const payload = {
+        ...formData,
+        services: formData.services.split(",").map(item => item.trim())
+      };
+
+      const { data } = await axios.post(`${backendUrl}/api/vendors/create`, payload, { withCredentials: true } );
+
+      if (data.success) {
+        // Upload profile image if selected
+        if (profileImage) {
+          await uploadProfileImage(data.vendor.id);
+        }
+
+        // Upload portfolio images if selected
+        if (portfolioImages.length > 0) {
+          await uploadPortfolioImages(data.vendor.id);
+        }
+        
+        toast.success("Vendor profile created successfully!");
+        await getAuthState();
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
