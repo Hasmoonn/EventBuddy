@@ -77,6 +77,29 @@ const VendorProfileForm = () => {
     }
   };
 
+  const uploadPortfolioImages = async (vendorId) => {
+    if (portfolioImages.length === 0) 
+      return;
+
+    const formData = new FormData();
+    portfolioImages.forEach(file => {
+      formData.append('portfolio', file);
+    });
+
+    try {
+      await axios.post(
+        `${backendUrl}/api/vendors/upload-portfolio`,
+        formData,
+        { 
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }
+      );
+    } catch (error) {
+      console.error("Portfolio images upload failed:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
