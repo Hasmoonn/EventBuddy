@@ -69,6 +69,27 @@ export const submitReview = async (req, res) => {
     }
 
 };
+
+// Get user's bookings for review form
+export const getUserBookings = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const bookings = await bookingModel.find({ user_id: userId })
+            .populate('vendor_id', 'business_name')
+            .populate('event_id', 'title')
+            .sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            bookings: bookings || []
+        });
+    } catch (error) {
+        console.error('Error fetching user bookings:', error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
 // Edit a review
 export const editReview = async (req, res) => {
     try {
