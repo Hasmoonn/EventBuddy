@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import { BarChart3, Building, Calendar, DollarSign, Search, Shield, Star, TrendingUp, Users } from 'lucide-react'
+import axios from 'axios';
+import jsPDF from 'jspdf';
+import { useNavigate } from 'react-router-dom';
+import { BarChart3, Building, Calendar, DollarSign, Search, Shield, Star, TrendingUp, Users, LogIn, LogOut } from 'lucide-react'
+import { AuthContext } from '../contexts/AuthContext';
 
 const AdminPanel = () => {
+
+  const {user, setUser, backendUrl} = useContext(AuthContext)
+  const navigate = useNavigate()
 
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -10,15 +17,28 @@ const AdminPanel = () => {
     totalEvents: 0,
     totalRevenue: 0,
     recentBookings: 0,
-    activeEvents: 0
+    activeEvents: 0,
+    totalUsersGrowth: 0,
+    totalVendorsGrowth: 0,
+    totalEventsGrowth: 0,
+    totalRevenueGrowth: 0
+  });
+
+  const [analytics, setAnalytics] = useState({
+    userGrowthRate: 0,
+    vendorConversionRate: 0,
+    averageEventValue: 0,
+    customerSatisfaction: 0,
+    popularEventTypes: []
   });
 
   const [users, setUsers] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false)
 
-  const [activeTab, setActiveTab] = useState("users"); 
+  const [activeTab, setActiveTab] = useState("users");
 
   useEffect(() => {
     fetchDashboardData();
@@ -26,69 +46,154 @@ const AdminPanel = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // // Fetch platform statistics
-      // const [usersRes, vendorsRes, eventsRes, paymentsRes] = await Promise.all([
-      //   supabase.from('profiles').select('*', { count: 'exact' }),
-      //   supabase.from('vendors').select('*', { count: 'exact' }),
-      //   supabase.from('events').select('*', { count: 'exact' }),
-      //   supabase.from('payments').select('amount')
-      // ]);
+      setLoading(true);
+      const adminToken = localStorage.getItem('adminToken');
+      if (!adminToken) {
+        toast.error('Admin authentication required');
+        return;
+      }
 
-      // const totalRevenue = paymentsRes.data?.reduce((sum, payment) => sum + Number(payment.amount), 0) || 0;
-      
-      // setStats({
-      //   totalUsers: usersRes.count || 0,
-      //   totalVendors: vendorsRes.count || 0,
-      //   totalEvents: eventsRes.count || 0,
-      //   totalRevenue,
-      //   recentBookings: 0,
-      //   activeEvents: 0
-      // });
+      const [statsRes, usersRes, vendorsRes, analyticsRes] = await Promise.all([
+        axios.get(`${backendUrl}/api/admin/stats`, { headers: { token: adminToken } }),
+        axios.get(`${backendUrl}/api/admin/users`, { headers: { token: adminToken } }),
+        axios.get(`${backendUrl}/api/admin/vendors`, { headers: { token: adminToken } }),
+        axios.get(`${backendUrl}/api/admin/analytics`, { headers: { token: adminToken } })
+      ]);
 
-      // setUsers(data);
-      // setVendors(data);
+      if (statsRes.data.success) {
+        setStats(statsRes.data.stats);
+      }
+
+      if (usersRes.data.success) {
+        setUsers(usersRes.data.users);
+      }
+
+      if (vendorsRes.data.success) {
+        setVendors(vendorsRes.data.vendors);
+      }
+
+      if (analyticsRes.data.success) {
+        setAnalytics(analyticsRes.data.analytics);
+      }
+
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const toggleUserStatus = async (userId, currentStatus) => {
+  const toggleUserStatus = async (userId) => {
     try {
-      // In a real implementation, you would have a user status field
-      // toast({
-      //   title: "User Status Updated",
-      //   description: `User ${currentStatus ? 'deactivated' : 'activated'} successfully`,
-      // });
+      const adminToken = localStorage.getItem('adminToken');
+      if (!adminToken) {
+        toast.error('Admin authentication required');
+        return;
+      }
+
+      const response = await axios.post(`${backendUrl}/api/admin/toggle-user-status`, { userId }, {
+        headers: { token: adminToken }
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        // Refresh users list
+        fetchDashboardData();
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
-  const toggleVendorVerification = async (vendorId, currentStatus) => {
+  const toggleVendorVerification = async (vendorId) => {
     try {
-      // const { error } = await supabase
-      //   .from('vendors')
-      //   .update({ verified: !currentStatus })
-      //   .eq('id', vendorId);
+      const adminToken = localStorage.getItem('adminToken');
+      if (!adminToken) {
+        toast.error('Admin authentication required');
+        return;
+      }
 
-      // if (error) throw error;
+      const response = await axios.post(`${backendUrl}/api/admin/toggle-vendor-verification`, { vendorId }, {
+        headers: { token: adminToken }
+      });
 
-      // setVendors(prev => 
-      //   prev.map(v => v.id === vendorId ? { ...v, verified: !currentStatus } : v)
-      // );
-
-      // toast({
-      //   title: "Vendor Status Updated",
-      //   description: `Vendor ${!currentStatus ? 'verified' : 'unverified'} successfully`,
-      // });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        // Refresh vendors list
+        fetchDashboardData();
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
-  const filteredUsers = users.filter(user => 
-    user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.id?.toLowerCase().includes(searchTerm.toLowerCase())
+  const generateRevenueReport = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('Revenue Report', 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35);
+    doc.text(`Total Revenue: $${stats.totalRevenue.toLocaleString()}`, 20, 50);
+    doc.text(`Total Events: ${stats.totalEvents.toLocaleString()}`, 20, 65);
+    doc.text(`Recent Bookings: ${stats.recentBookings.toLocaleString()}`, 20, 80);
+    doc.text(`Active Events: ${stats.activeEvents.toLocaleString()}`, 20, 95);
+    doc.text(`Revenue Growth: +${stats.totalRevenueGrowth}% from last month`, 20, 110);
+    doc.save('revenue-report.pdf');
+    toast.success('Revenue report downloaded');
+  };
+
+  const generateUserActivityReport = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('User Activity Report', 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35);
+    doc.text(`Total Users: ${stats.totalUsers.toLocaleString()}`, 20, 50);
+    doc.text(`Total Vendors: ${stats.totalVendors.toLocaleString()}`, 20, 65);
+    doc.text(`User Growth: +${stats.totalUsersGrowth}% from last month`, 20, 80);
+    doc.text(`Vendor Growth: +${stats.totalVendorsGrowth}% from last month`, 20, 95);
+    doc.text('User List:', 20, 110);
+    let y = 125;
+    users.slice(0, 20).forEach((user, index) => {
+      doc.text(`${index + 1}. ${user.name} - ${user.email} (${user.is_vendor ? 'Vendor' : 'User'})`, 20, y);
+      y += 10;
+    });
+    doc.save('user-activity-report.pdf');
+    toast.success('User activity report downloaded');
+  };
+
+  const generateVendorPerformanceReport = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('Vendor Performance Report', 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35);
+    doc.text(`Total Vendors: ${stats.totalVendors.toLocaleString()}`, 20, 50);
+    doc.text(`Vendor Growth: +${stats.totalVendorsGrowth}% from last month`, 20, 65);
+    doc.text('Vendor List:', 20, 80);
+    let y = 95;
+    vendors.slice(0, 20).forEach((vendor, index) => {
+      doc.text(`${index + 1}. ${vendor.business_name} - ${vendor.category} (Rating: ${vendor.rating || 0}, Reviews: ${vendor.total_reviews || 0}, Verified: ${vendor.verified ? 'Yes' : 'No'})`, 20, y);
+      y += 10;
+    });
+    doc.save('vendor-performance-report.pdf');
+    toast.success('Vendor performance report downloaded');
+  };
+
+  const logout = () => {
+    localStorage.removeItem('adminToken');
+    setUser(null);
+    toast.success('Logged out successfully');
+    navigate('/auth');
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user._id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredVendors = vendors.filter(vendor => 
@@ -110,9 +215,15 @@ const AdminPanel = () => {
             </p>
           </div>
 
-          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent hover:bg-[rgba(var(--primary),0.3)] bg-[rgba(var(--primary),0.2)] text-[rgb(var(--primary))]">
-            <Shield className="h-3 w-3 mr-1" />
-            Administrator
+          <div className="flex items-center space-x-2">
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent hover:bg-[rgba(var(--primary),0.3)] bg-[rgba(var(--primary),0.2)] text-[rgb(var(--primary))]">
+              <Shield className="h-3 w-3 mr-1" />
+              Administrator
+            </div>
+            <button onClick={logout} className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 cursor-pointer'>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </button>
           </div>
         </div>
 
@@ -127,7 +238,7 @@ const AdminPanel = () => {
               <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
               <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
                 <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-                +12% from last month
+                +{stats.totalUsersGrowth}% from last month
               </div>
             </div>
           </div>
@@ -141,7 +252,7 @@ const AdminPanel = () => {
               <div className="text-2xl font-bold">{stats.totalVendors.toLocaleString()}</div>
               <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
                 <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-                +8% from last month
+                +{stats.totalVendorsGrowth}% from last month
               </div>
             </div>
           </div>
@@ -155,7 +266,7 @@ const AdminPanel = () => {
               <div className="text-2xl font-bold">{stats.totalEvents.toLocaleString()}</div>
               <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
                 <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-                +15% from last month
+                +{stats.totalEventsGrowth}% from last month
               </div>
             </div>
           </div>
@@ -166,10 +277,10 @@ const AdminPanel = () => {
               <DollarSign className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
             </div>
             <div className='p-6 pt-0'>
-              <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold">LKR {stats.totalRevenue.toLocaleString()}</div>
               <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
                 <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-                +22% from last month
+                +{stats.totalRevenueGrowth}% from last month
               </div>
             </div>
           </div>
@@ -213,12 +324,12 @@ const AdminPanel = () => {
                           <div className="flex items-center space-x-4">
                             <div className="h-10 w-10 gradient-primary rounded-full flex items-center justify-center">
                               <span className="text-white font-medium">
-                                {user.full_name?.[0]?.toUpperCase() || 'U'}
+                                {user.name?.[0]?.toUpperCase() || 'U'}
                               </span>
                             </div>
                             <div>
-                              <p className="font-medium">{user.full_name || 'Unknown User'}</p>
-                              <p className="text-sm text-[rgb(var(--muted-foreground))]">{user.id}</p>
+                              <p className="font-medium">{user.name || 'Unknown User'}</p>
+                              <p className="text-sm text-[rgb(var(--muted-foreground))]">{user.email}</p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -226,8 +337,8 @@ const AdminPanel = () => {
                               {user.is_vendor ? 'Vendor' : 'User'}
                             </div>
 
-                            <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 cursor-pointer' onClick={() => toggleUserStatus(user.id, true)}  >
-                              Manage
+                            <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 cursor-pointer' onClick={() => toggleUserStatus(user._id)}  >
+                              {user.is_active ? 'Deactivate' : 'Activate'}
                             </button>
                           </div>
                         </div>
@@ -260,7 +371,7 @@ const AdminPanel = () => {
                   <div className='p-6 pt-0'>
                     <div className="space-y-4">
                       {filteredVendors.map((vendor) => (
-                        <div key={vendor.id} className="flex items-center justify-between p-4 border border-[rgb(var(--border))] rounded-lg">
+                        <div key={vendor._id} className="flex items-center justify-between p-4 border border-[rgb(var(--border))] rounded-lg">
                           <div className="flex items-center space-x-4">
                             <div className="h-10 w-10 gradient-primary rounded-full flex items-center justify-center">
                               <Building className="h-5 w-5 text-white" />
@@ -285,7 +396,7 @@ const AdminPanel = () => {
                               {vendor.verified ? 'Verified' : 'Pending'}
                             </div>
 
-                            <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 cursor-pointer' onClick={() => toggleVendorVerification(vendor.id, vendor.verified)} >
+                            <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 cursor-pointer' onClick={() => toggleVendorVerification(vendor._id, vendor.verified)} >
                               {vendor.verified ? 'Unverify' : 'Verify'}
                             </button>
                           </div>
@@ -310,19 +421,19 @@ const AdminPanel = () => {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center">
                           <span className="text-sm">User Growth Rate</span>
-                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>+12%</div>
+                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>+{analytics.userGrowthRate}%</div>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Vendor Conversion Rate</span>
-                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>8.5%</div>
+                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>{analytics.vendorConversionRate}%</div>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Average Event Value</span>
-                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>$2,450</div>
+                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>LKR {analytics.averageEventValue.toLocaleString()}</div>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Customer Satisfaction</span>
-                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>4.7/5</div>
+                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>{analytics.customerSatisfaction}/5</div>
                         </div>
                       </div>
                     </div>
@@ -335,14 +446,14 @@ const AdminPanel = () => {
                     </div>
                     <div className='p-6 pt-0'>
                       <div className="space-y-4">
-                        {['Wedding', 'Corporate Event', 'Birthday Party', 'Anniversary'].map((type, index) => (
-                          <div key={type} className="flex justify-between items-center">
-                            <span className="text-sm">{type}</span>
+                        {analytics.popularEventTypes.map((eventType, index) => (
+                          <div key={index} className="flex justify-between items-center">
+                            <span className="text-sm text-black">{eventType.name}</span>
                             <div className="flex items-center space-x-2">
                               <div className="w-24 bg-[rgb(var(--muted))] rounded-full h-2">
-                                <div className="bg-[rgb(var(--primary))] h-2 rounded-full" style={{ width: `${85 - index * 15}%` }} />
+                                <div className="bg-[rgb(var(--primary))] h-2 rounded-full" style={{ width: `${eventType.percentage}%` }} />
                               </div>
-                              <span className="text-xs text-[rgb(var(--muted-foreground))]">{85 - index * 15}%</span>
+                              <span className="text-xs text-[rgb(var(--muted-foreground))]">{eventType.percentage}%</span>
                             </div>
                           </div>
                         ))}
@@ -363,17 +474,17 @@ const AdminPanel = () => {
 
                   <div className='p-6 pt-0'>
                     <div className="grid md:grid-cols-3 gap-4">
-                      <button className='inline-flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-20 px-4 cursor-pointer' >
+                      <button className='inline-flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-20 px-4 cursor-pointer' onClick={generateRevenueReport}>
                         <BarChart3 className="h-6 w-6 mb-2" />
                         Revenue Report
                       </button>
 
-                      <button className='inline-flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-20 px-4 cursor-pointer' >
+                      <button className='inline-flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-20 px-4 cursor-pointer' onClick={generateUserActivityReport}>
                         <Users className="h-6 w-6 mb-2" />
                         User Activity
                       </button>
 
-                      <button className='inline-flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-20 px-4 cursor-pointer'>
+                      <button className='inline-flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-20 px-4 cursor-pointer' onClick={generateVendorPerformanceReport}>
                         <Building className="h-6 w-6 mb-2" />
                         Vendor Performance
                       </button>

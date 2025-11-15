@@ -17,6 +17,7 @@ import About from './pages/About'
 import Help from './pages/Help'
 import AdminPanel from './pages/AdminPanel'
 import VendorDashboard from './pages/VendorDashboard'
+import ResetPassword from './pages/ResetPassword'
 import VendorProfileForm from './pages/VendorProfileForm'
 
 const App = () => {
@@ -26,8 +27,10 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Index />} /> 
         <Route path='/auth' element={<Auth />} /> 
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/dashboard' element={<Dashboard />} /> 
         <Route path='/vendors' element={<Vendors />} /> 
+        <Route path='/vendor/create-vendor' element={<VendorProfileForm />} /> 
         <Route path='/vendors/:id' element={<VendorProfile />} /> 
         <Route path='/create-event' element={<CreateEvent />} /> 
         <Route path='/events/:id' element={<EventDetails />} /> 
@@ -46,8 +49,7 @@ const App = () => {
         <Route path='/press' element={<About />} /> 
         <Route path='/privacy' element={<Help />} /> 
         <Route path='/terms' element={<Help />} /> 
-        <Route path='/cookies' element={<Help />} />
-        <Route path='/vendor-profile-form' element={<VendorProfileForm />} /> 
+        <Route path='/cookies' element={<Help />} /> 
         <Route path='*' element={<NotFound />} /> 
       </Routes>
     </div>
