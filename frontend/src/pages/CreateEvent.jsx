@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import EventForm from '../components/EventForm';
 import AiAssistant from '../components/AiAssistant';
 import { ArrowLeft } from 'lucide-react';
+import { AuthContext } from '../contexts/AuthContext';
 
 
 const CreateEvent = () => {
   const navigate = useNavigate()
+  const { backendUrl } = React.useContext(AuthContext);
 
   const handleEventSave = (event) => {
-    navigate(`/events/${event.id}`);
+    navigate(`/events/${event._id}`);
   };
 
   const handleCancel = () => {
@@ -38,7 +40,7 @@ const CreateEvent = () => {
 
         <div className="grid lg:grid-cols-2 gap-8">
           <div>
-            <EventForm event={{}} onSave={handleEventSave} onCancel={handleCancel} />
+            <EventForm event={{}} onSave={handleEventSave} onCancel={handleCancel} backendUrl={backendUrl} />
           </div>
 
           <div>
