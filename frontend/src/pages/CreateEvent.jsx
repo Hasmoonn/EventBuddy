@@ -7,6 +7,7 @@ import { AuthContext } from '../contexts/AuthContext';
 
 const CreateEvent = () => {
   const navigate = useNavigate()
+  const { backendUrl } = React.useContext(AuthContext);
   
   const handleEventSave = (event) => {
     navigate(`/events/${event.id}`);
