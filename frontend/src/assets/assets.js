@@ -1,34 +1,6 @@
 import { Award, Brain, Calendar, Camera, Car, CreditCard, Heart, MapIcon, MessageCircle, Music, Palette, Search, Shield, Star, Target, Users, Utensils } from 'lucide-react'
 
 
-export const mockNotifications = [
-  {
-    id: '1',
-    type: 'booking_confirmation',
-    message: 'Your booking with Golden Gate Catering has been confirmed',
-    read_status: false,
-    created_at: new Date().toISOString(),
-    user_id: 'user1'
-  },
-  {
-    id: '2',
-    type: 'payment_reminder',
-    message: 'Payment due for your photography service in 3 days',
-    read_status: false,
-    created_at: new Date(Date.now() - 3600000).toISOString(),
-    user_id: 'user1'
-  },
-  {
-    id: '3',
-    type: 'event_reminder',
-    message: 'Your wedding is coming up in 2 weeks!',
-    read_status: true,
-    created_at: new Date(Date.now() - 7200000).toISOString(),
-    user_id: 'user1'
-  }
-];
-
-
 export const features = [
   {
     icon: Brain,
@@ -89,69 +61,7 @@ export const features = [
 ];
 
 
-// export const vendors = [
-//   {
-//     id: 1,
-//     name: "Elegant Events Photography",
-//     category: "Photography",
-//     rating: 4.9,
-//     reviews: 127,
-//     location: "New York, NY",
-//     price: "$1,200-$3,500",
-//     image: "/placeholder.svg",
-//     icon: Camera,
-//     available: true,
-//     verified: true,
-//     specialties: ["Wedding", "Corporate", "Portrait"]
-//   },
-//   {
-//     id: 2,
-//     name: "Gourmet Catering Co.",
-//     category: "Catering",
-//     rating: 4.8,
-//     reviews: 89,
-//     location: "Los Angeles, CA",
-//     price: "$35-$85/person",
-//     image: "/placeholder.svg",
-//     icon: Utensils,
-//     available: true,
-//     verified: true,
-//     specialties: ["Fine Dining", "BBQ", "Vegan"]
-//   },
-//   {
-//     id: 3,
-//     name: "Harmony Music Events",
-//     category: "Entertainment",
-//     rating: 5.0,
-//     reviews: 64,
-//     location: "Chicago, IL",
-//     price: "$800-$2,200",
-//     image: "/placeholder.svg",
-//     icon: Music,
-//     available: false,
-//     verified: true,
-//     specialties: ["Live Band", "DJ", "Classical"]
-//   },
-//   {
-//     id: 4,
-//     name: "Creative Decor Studio",
-//     category: "Decoration",
-//     rating: 4.7,
-//     reviews: 156,
-//     location: "Miami, FL",
-//     price: "$500-$1,800",
-//     image: "/placeholder.svg",
-//     icon: Palette,
-//     available: true,
-//     verified: true,
-//     specialties: ["Floral", "Lighting", "Themes"]
-//   }
-// ];
-
-
 // about 
-
-
 export const stats = [
   { number: "10K+", label: "Events Planned", icon: Target },
   { number: "500+", label: "Trusted Vendors", icon: Users },
@@ -187,19 +97,23 @@ export const team = [
 export const values = [
   {
     title: "Reliability",
-    description: "We connect you only with verified, trusted vendors who deliver exceptional service."
+    description: "We connect you only with verified, trusted vendors who deliver exceptional service.",
+    icon: Shield
   },
   {
     title: "Innovation",
-    description: "Our AI-powered platform continuously evolves to make event planning smarter and easier."
+    description: "Our AI-powered platform continuously evolves to make event planning smarter and easier.",
+    icon: Brain
   },
   {
     title: "Community",
-    description: "We foster a supportive ecosystem where planners and vendors grow together."
+    description: "We foster a supportive ecosystem where planners and vendors grow together.",
+    icon: Users
   },
   {
     title: "Excellence",
-    description: "Every event matters. We're committed to helping you create unforgettable experiences."
+    description: "Every event matters. We're committed to helping you create unforgettable experiences.",
+    icon: Star
   }
 ];
 
@@ -360,6 +274,9 @@ export const users = [
     full_name: "John Doe",
     email: "john.doe@example.com",
     phone: "+94771234567",
+    bio: "A vendor specializing in electronics.",  
+    location: "Colombo, Sri Lanka",              
+    avatar_url: "https://example.com/avatars/john_doe.jpg", 
     is_vendor: true
   },
   {
@@ -367,6 +284,9 @@ export const users = [
     full_name: "Sophia Silva",
     email: "sophia.silva@example.com",
     phone: "+94776543210",
+    bio: "Handmade crafts artisan.",             
+    location: "Kandy, Sri Lanka",               
+    avatar_url: "https://example.com/avatars/sophia_silva.jpg", 
     is_vendor: true
   },
   {
@@ -374,9 +294,68 @@ export const users = [
     full_name: "Michael Perera",
     email: "michael.perera@example.com",
     phone: "+94778889999",
+    bio: "Regular customer and tech enthusiast.", 
+    location: "Galle, Sri Lanka",                
+    avatar_url: "https://example.com/avatars/michael_perera.jpg", 
     is_vendor: false
   }
 ];
+
+// notifications
+export const notificationSettings = [
+  {
+    _id: "N001",
+    user_id: "U001",
+    email_bookings: true,
+    email_reminders: true,
+    sms_notifications: true,
+    marketing_emails: false
+  },
+  {
+    _id: "N002",
+    user_id: "U002",
+    email_bookings: true,
+    email_reminders: false,
+    sms_notifications: false,
+    marketing_emails: true
+  },
+  {
+    _id: "N003",
+    user_id: "U003",
+    email_bookings: false,
+    email_reminders: true,
+    sms_notifications: true,
+    marketing_emails: false
+  }
+]
+
+export const mockNotifications = [
+  {
+    id: '1',
+    type: 'booking_confirmation',
+    message: 'Your booking with Golden Gate Catering has been confirmed',
+    read_status: false,
+    created_at: new Date().toISOString(),
+    user_id: 'user1'
+  },
+  {
+    id: '2',
+    type: 'payment_reminder',
+    message: 'Payment due for your photography service in 3 days',
+    read_status: false,
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+    user_id: 'user1'
+  },
+  {
+    id: '3',
+    type: 'event_reminder',
+    message: 'Your wedding is coming up in 2 weeks!',
+    read_status: true,
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+    user_id: 'user1'
+  }
+];
+
 
 export const eventsData = [
   {
@@ -541,6 +520,7 @@ export const upcomingEventsData = [
     status: "Planning"
   }
 ];
+
 
 export const recentActivitiesData = [
   {

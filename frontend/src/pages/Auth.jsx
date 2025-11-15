@@ -1,31 +1,44 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Calendar, Mail, Sparkles, User, Lock } from 'lucide-react'
+import { ArrowLeft, Calendar, Mail, Sparkles, User, Lock, Briefcase } from 'lucide-react'
+import { AuthContext } from '../contexts/AuthContext'
+import axios from 'axios'
+import { HashLoader } from "react-spinners";
 
 const Auth = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [user, setUser ] = useState()
-  const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [isVendor, setIsVendor] = useState(false);
+  const {backendUrl, navigate, setIsAuthenticated, loading, setLoading, user, setUser, adminLogin} = useContext(AuthContext);
 
   const [activeTab, setActiveTab] = useState("signin");
 
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
+    if (!loading) {   
+      if (user) {
+        navigate('/dashboard'); 
+      }
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      
+      const {data} = await axios.post(backendUrl + '/api/auth/login', {email, password})
+
+      if (data.success) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        navigate('/dashboard');
+        toast.success(`User Logged In successfully.`)
+      } else{
+          toast.error(data.message)
+      }
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -38,7 +51,20 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      
+      const {data} = await axios.post(backendUrl + '/api/auth/register', {name, email, password, is_vendor: isVendor})
+
+      if (data.success && data.user.is_vendor) {
+        return navigate('/vendor/create-vendor');
+      } else if(data.success && !data.user.is_vendor) {
+          setUser(data.user);
+          setIsAuthenticated(true);
+          navigate('/dashboard');
+          toast.success(`Welcome, ${data.user.name}`);
+      } else {
+          toast.error(data.message)
+      }
+
+      return
     } catch (error) {
         toast.error(error.message)
 
@@ -46,6 +72,34 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const result = await adminLogin(email, password);
+
+      if (result.success) {
+        navigate('/admin');
+        toast.success('Admin login successful');
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[rgb(var(--background))] to-[rgba(var(--accent-foreground),0.3)] flex items-center justify-center p-4">
@@ -85,7 +139,7 @@ const Auth = () => {
           </div>
           
           <div className='p-6 pt-0 space-y-6'>
-            <div className="grid w-full grid-cols-2 h-10 rounded-md bg-[rgba(var(--accent-foreground),0.1)] p-1 text-[rgb(var(--muted-foreground))]">
+            <div className="grid w-full grid-cols-3 h-10 rounded-md bg-[rgba(var(--accent-foreground),0.1)] p-1 text-[rgb(var(--muted-foreground))]">
               <button onClick={() => setActiveTab("signin")} className={`inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition-all cursor-pointer w-full ${activeTab === "signin" ? "bg-[rgb(var(--background))] text-[rgb(var(--foreground))] shadow-sm"
                     : "text-[rgb(var(--muted-foreground))]"
                 }`}
@@ -99,6 +153,14 @@ const Auth = () => {
                 }`}
               >
                 Sign Up
+              </button>
+
+              <button onClick={() => setActiveTab("admin")} className={`inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition-all cursor-pointer w-full ${activeTab === "admin"
+                    ? "bg-[rgb(var(--background))] text-[rgb(var(--foreground))]"
+                    : "text-[rgb(var(--muted-foreground))]"
+                }`}
+              >
+                Admin
               </button>
             </div>
             
@@ -134,6 +196,16 @@ const Auth = () => {
                       required
                     />
                   </div>
+
+                  {
+                    activeTab === 'signin' && (
+                      <div className='mb-4 flex justify-end'>
+                        <Link to='/reset-password' >
+                          <p className='text-purple-500 hover:underline transition-all font-medium'>Forgot Password?</p>
+                        </Link>
+                      </div>
+                    )
+                  }
                   
                   <button type="submit" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 w-full btn-hero" disabled={loading}
                   >
@@ -155,8 +227,8 @@ const Auth = () => {
                       id="signup-name"
                       type="text"
                       placeholder="Enter your full name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       required
                     />
                   </div>
@@ -190,6 +262,21 @@ const Auth = () => {
                       required
                     />
                   </div>
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      id="is-vendor"
+                      type="checkbox"
+                      checked={isVendor}
+                      onChange={(e) => setIsVendor(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 focus:ring-2 focus:ring-[rgb(var(--ring))]"
+                    />
+
+                    <label htmlFor="is-vendor" className="flex items-center text-sm font-medium leading-none cursor-pointer">
+                      <Briefcase className="h-4 w-4 mr-2 text-[rgb(var(--primary))]" />
+                      Register as Vendor
+                    </label>
+                  </div>
                   
                   <button type="submit" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 w-full btn-hero" disabled={loading} >
                     {loading ? "Creating Account..." : "Create Account"}
@@ -197,6 +284,66 @@ const Auth = () => {
                 </form>
               )
             }
+
+            {
+              activeTab === "admin" && (
+                <form onSubmit={handleAdminLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="admin-email" className="text-sm font-medium leading-none flex items-center space-x-2">
+                      <Mail className="h-4 w-4" />
+                      <span>Admin Email</span>
+                    </label>
+                    <input className='rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm w-full'
+                      id="admin-email"
+                      type="email"
+                      placeholder="Enter admin email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="admin-password" className="text-sm font-medium leading-none flex items-center space-x-2">
+                      <Lock className="h-4 w-4" />
+                      <span>Admin Password</span>
+                    </label>
+                    <input className='rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm w-full'
+                      id="admin-password"
+                      type="password"
+                      placeholder="Enter admin password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <button type="submit" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 w-full btn-hero" disabled={loading}
+                  >
+                    {loading ? "Logging In..." : "Admin Login"}
+                  </button>
+                </form>
+              )
+            }
+          </div>
+
+          <div className='text-center mb-4'>
+            <p className='text-sm text-gray-600'>
+              {
+                activeTab === 'signin' ? "Don't have an account?" : "Already have an account?"
+              }{' '}
+              <button onClick={() => {
+                  if (activeTab === 'signin') {
+                    setActiveTab('signup')
+                  } else{
+                    setActiveTab('signin')
+                  }
+                ; scrollTo(0,0)} } className='font-medium hover:text-purple-500 cursor-pointer hover:underline'>
+                {
+                  activeTab === 'signin' ? "Sign up" : "Sign in" 
+                }
+              </button>
+            </p>
           </div>
         </div>
 
