@@ -10,7 +10,7 @@ const CreateEvent = () => {
   const { backendUrl } = React.useContext(AuthContext);
   
   const handleEventSave = (event) => {
-    navigate(`/events/${event.id}`);
+    navigate(`/events/${event._id}`);
   };
 
   const handleCancel = () => {
