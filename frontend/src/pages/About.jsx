@@ -36,6 +36,35 @@ const Vendors = () => {
     }
   }
 
+
+  const filterVendors = async () => {
+    try {
+
+      let filtered = vendors;
+
+      if (searchTerm) {
+        filtered = filtered.filter(vendor =>
+          vendor.business_name.toLowerCase().includes(searchTerm.toLowerCase()) || vendor.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter(vendor => vendor.category === selectedCategory);
+      }
+
+      if (selectedLocation !== 'all') {
+        filtered = filtered.filter(vendor =>
+          vendor.location.toLowerCase().includes(selectedLocation.toLowerCase())
+        );
+      }
+
+      setFilteredVendors(filtered);
+        
+    } catch (error) {
+        toast.error('error occured')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
