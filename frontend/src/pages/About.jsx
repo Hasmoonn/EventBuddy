@@ -17,6 +17,25 @@ const Vendors = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
 
+
+  const fetchVendors = async () => {
+    setLoading(true)
+
+    try {
+      const {data} = await axios.get(backendUrl + '/api/vendors')
+
+      if (!data.success) {
+        return toast.error(data.message)
+      }
+
+      setVendors(data.vendors)
+    } catch (error) {
+        toast.error(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
