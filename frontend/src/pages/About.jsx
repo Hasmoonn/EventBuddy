@@ -105,6 +105,20 @@ const Vendors = () => {
     }
   };
 
+
+  const getIconForCategory = (category) => {
+    if (!category) 
+      return Star
+
+    const catLower = category.toLowerCase()
+
+    const key = Object.keys(categoryIcons).find((k) =>
+      catLower.includes(k.toLowerCase())
+    )
+
+    return categoryIcons[key] || Star
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
