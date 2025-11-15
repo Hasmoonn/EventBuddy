@@ -5,10 +5,11 @@ import AiAssistant from '../components/AiAssistant';
 import { ArrowLeft } from 'lucide-react';
 import { AuthContext } from '../contexts/AuthContext';
 
+
 const CreateEvent = () => {
   const navigate = useNavigate()
   const { backendUrl } = React.useContext(AuthContext);
-  
+
   const handleEventSave = (event) => {
     navigate(`/events/${event._id}`);
   };
@@ -25,18 +26,23 @@ const CreateEvent = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </button>
+
           <h1 className="text-4xl font-bold text-gradient mb-2">
             Create New Event
           </h1>
+
           <p className="text-[rgb(var(--muted-foreground))]">
             Plan your perfect event with AI-powered assistance
           </p>
         </div>
+
         <hr />
+
         <div className="grid lg:grid-cols-2 gap-8">
           <div>
-            <EventForm event={{}} onSave={handleEventSave} onCancel={handleCancel} />
+            <EventForm event={{}} onSave={handleEventSave} onCancel={handleCancel} backendUrl={backendUrl} />
           </div>
+
           <div>
             <AiAssistant
               eventType="wedding"
@@ -49,6 +55,7 @@ const CreateEvent = () => {
       </div>
     </div>
   )
+
 }
 
 export default CreateEvent
