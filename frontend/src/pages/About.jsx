@@ -119,6 +119,18 @@ const Vendors = () => {
     return categoryIcons[key] || Star
   }
 
+
+  const handleBooking = (vendor) => {
+    if (!vendor.available) {
+      toast.error("This vendor is currently not taking new bookings.");
+      return;
+    }
+    
+    toast.success(`Your booking request to ${vendor.business_name} has been sent. They will contact you to confirm availability.`);
+  };
+
+  const uniqueLocations = [...new Set(vendors.map(vendor => vendor.location))];
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
