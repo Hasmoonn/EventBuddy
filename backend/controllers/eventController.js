@@ -30,18 +30,18 @@ export const getUserEvents = async (req, res) => {
     }
 }
 
-export const getEventById = async(req, res) => {
+export const getEventById = async (req, res) => {
     try {
         const userId = req.user.id;
         const { id } = req.params;
 
-        const event = await eventModel.findOne({_id: id, user_id: userId});
+        const event = await eventModel.findOne({ _id: id, user_id: userId });
 
-        if(!event) {
-            return res.json({ success: false, message: "Event not found"});
+        if (!event) {
+            return res.json({ success: false, message: "Event not found" });
         }
         res.json({ success: true, event });
-    }catch(error){
+    } catch (error) {
         res.json({ success: false, message: error.message });
     }
 }
@@ -61,6 +61,22 @@ export const updateEvent = async (req, res) => {
             return res.json({ success: false, message: "Event not found" });
         }
         res.json({ success: true, message: "Event updated successfully", event });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const deleteEvent = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { id } = req.params;
+
+        const event = await eventModel.findOneAndDelete({ _id: id, user_id: userId });
+        
+        if (!event) {
+            return res.json({ success: false, message: "Event not found" });
+        }
+        res.json({ success: true, message: "Event deleted successfully" });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
