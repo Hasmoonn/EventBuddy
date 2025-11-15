@@ -13,7 +13,7 @@ export const submitReview = async (req, res) => {
             return res.json({ success: false, message: 'Booking not found or does not belong to user' });
         }
 
-        
+
         const existingReview = await reviewModel.findOne({ user_id: userId, booking_id: booking_id });
         if (existingReview) {
             return res.json({ success: false, message: 'Review already exists for this booking' });
@@ -52,6 +52,29 @@ export const getUserBookings = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching user bookings:', error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+export const editReview = async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+        const { rating, comment } = req.body;
+        const userId = req.body.userId;
+
+        const review = await reviewModel.findOne({ _id: reviewId, user_id: userId });
+        if (!review) {
+            return res.json({ success: false, message: 'Review not found or does not belong to user' });
+        }
+
+
+        review.rating = rating;
+        review.comment = comment;
+        await review.save();
+
+        res.json({ success: true, message: 'Review updated successfully' });
+    } catch (error) {
+        console.error('Error editing review:', error);
         res.json({ success: false, message: error.message });
     }
 };
