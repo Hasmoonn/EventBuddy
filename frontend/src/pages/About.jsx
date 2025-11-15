@@ -82,6 +82,29 @@ const Vendors = () => {
     }
   };
 
+
+  const handleMessage = (vendor) => {
+    toast.success(`Your message to ${vendor.business_name} has been sent. They will contact you soon.`);
+  };
+
+  const handleCall = (vendor) => {
+    if (vendor.contact_phone) {
+      window.open(`tel:${vendor.contact_phone}`, '_self');
+    } else {
+      toast.error("This vendor hasn't provided a phone number.");
+    }
+  };
+
+  const handleEmail = (vendor) => {
+    if (vendor.contact_email) {
+      const subject = encodeURIComponent(`Event Inquiry - ${vendor.business_name}`);
+      const body = encodeURIComponent(`Hi,\n\nI'm interested in your services for an upcoming event. Please contact me to discuss details.\n\nThank you!`);
+      window.open(`mailto:${vendor.contact_email}?subject=${subject}&body=${body}`, '_self');
+    } else {
+        toast.error("This vendor hasn't provided an email address.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
