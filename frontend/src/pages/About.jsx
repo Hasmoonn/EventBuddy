@@ -131,6 +131,14 @@ const Vendors = () => {
 
   const uniqueLocations = [...new Set(vendors.map(vendor => vendor.location))];
 
+  useEffect(() => {
+    fetchVendors();
+  }, []);
+
+  useEffect(() => {
+    filterVendors();
+  }, [vendors, searchTerm, selectedCategory, selectedLocation]);
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
