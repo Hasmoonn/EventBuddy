@@ -64,6 +64,23 @@ const Vendors = () => {
         toast.error('error occured')
     }
   }
+  
+
+  const formatCurrency = (min, max) => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'LKR',
+      maximumFractionDigits: 0,
+    });
+    
+    if (min && max) {
+      return `${formatter.format(min)} - ${formatter.format(max)}`;
+    } else if (min) {
+      return `From ${formatter.format(min)}`;
+    } else {
+      return 'Contact for pricing';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
