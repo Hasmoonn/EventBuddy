@@ -45,7 +45,7 @@ export const getEventById = async (req, res) => {
     }
 };
 
-
+// Update event
 export const updateEvent = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -67,3 +67,22 @@ export const updateEvent = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
+// Delete event
+export const deleteEvent = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { id } = req.params;
+
+        const event = await eventModel.findOneAndDelete({ _id: id, user_id: userId });
+
+        if (!event) {
+            return res.json({ success: false, message: "Event not found" });
+        }
+
+        res.json({ success: true, message: "Event deleted successfully" });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};
+
