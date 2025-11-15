@@ -11,6 +11,12 @@ const Vendors = () => {
 
   const {backendUrl, user, isAuthenticated, loading, setLoading} = useContext(AuthContext);
 
+  const [vendors, setVendors] = useState([]);
+  const [filteredVendors, setFilteredVendors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('all');
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[rgb(var(--accent),0.5)] to-[rgba(var(--accent-foreground),0.1)]">
       <h1>Vendors Page</h1>
@@ -18,4 +24,4 @@ const Vendors = () => {
   )
 }
 
-export default Vendors;
+export default Vendors
