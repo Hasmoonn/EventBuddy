@@ -1,6 +1,20 @@
 import React, { useState } from 'react'
 import Header from '../components/Header';
-import { Book, ChevronDown, Mail, MessageCircle, Phone, Search, Users, Video } from 'lucide-react';
+import { 
+  Book, 
+  ChevronDown, 
+  Mail, 
+  MessageCircle, 
+  Phone, 
+  Search, 
+  Users, 
+  Video,
+  Zap,
+  Clock,
+  CheckCircle,
+  ArrowRight,
+  Sparkles
+} from 'lucide-react';
 import Footer from '../components/Footer';
 
 
