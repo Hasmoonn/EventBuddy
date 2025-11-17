@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Mail, MapPin, MessageCircle, Phone, Search, Star } from 'lucide-react'
 import toast from 'react-hot-toast';
-import {vendors} from '../assets/assets.js'
 import {categoryIcons} from '../assets/assets.js'
+import axios from "axios"
 
 const Vendors = () => {
 
