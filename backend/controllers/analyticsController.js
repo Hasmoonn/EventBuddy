@@ -4,94 +4,94 @@ import vendorModel from '../models/vendorModel.js';
 import userModel from '../models/userModel.js';
 
 // Get user analytics
-// export const getUserAnalytics = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
+export const getUserAnalytics = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-//     // Total events created by user
-//     const totalEvents = await eventModel.countDocuments({ user_id: userId });
+    // Total events created by user
+    const totalEvents = await eventModel.countDocuments({ user_id: userId });
 
-//     // Events by status
-//     const eventsByStatus = await eventModel.aggregate([
-//       { $match: { user_id: userId } },
-//       { $group: { _id: '$status', count: { $sum: 1 } } }
-//     ]);
+    // Events by status
+    const eventsByStatus = await eventModel.aggregate([
+      { $match: { user_id: userId } },
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
 
-//     // Total bookings made by user
-//     const totalBookings = await bookingModel.countDocuments({ user_id: userId });
+    // Total bookings made by user
+    const totalBookings = await bookingModel.countDocuments({ user_id: userId });
 
-//     // Bookings by status
-//     const bookingsByStatus = await bookingModel.aggregate([
-//       { $match: { user_id: userId } },
-//       { $group: { _id: '$status', count: { $sum: 1 } } }
-//     ]);
+    // Bookings by status
+    const bookingsByStatus = await bookingModel.aggregate([
+      { $match: { user_id: userId } },
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
 
-//     // Total revenue spent (sum of total_amount from confirmed bookings)
-//     const totalRevenue = await bookingModel.aggregate([
-//       { $match: { user_id: userId, status: 'Confirmed' } },
-//       { $group: { _id: null, total: { $sum: '$total_amount' } } }
-//     ]);
+    // Total revenue spent (sum of total_amount from confirmed bookings)
+    const totalRevenue = await bookingModel.aggregate([
+      { $match: { user_id: userId, status: 'Confirmed' } },
+      { $group: { _id: null, total: { $sum: '$total_amount' } } }
+    ]);
 
-//     // Recent events (last 5)
-//     const recentEvents = await eventModel.find({ user_id: userId })
-//       .sort({ createdAt: -1 })
-//       .limit(5)
-//       .select('title event_date status');
+    // Recent events (last 5)
+    const recentEvents = await eventModel.find({ user_id: userId })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('title event_date status');
 
-//     // Monthly event creation trend (last 12 months)
-//     const monthlyEvents = await eventModel.aggregate([
-//       { $match: { user_id: userId, createdAt: { $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) } } },
-//       {
-//         $group: {
-//           _id: {
-//             year: { $year: '$createdAt' },
-//             month: { $month: '$createdAt' }
-//           },
-//           count: { $sum: 1 }
-//         }
-//       },
-//       { $sort: { '_id.year': 1, '_id.month': 1 } }
-//     ]);
+    // Monthly event creation trend (last 12 months)
+    const monthlyEvents = await eventModel.aggregate([
+      { $match: { user_id: userId, createdAt: { $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) } } },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$createdAt' },
+            month: { $month: '$createdAt' }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { '_id.year': 1, '_id.month': 1 } }
+    ]);
 
-//     // Average budget per event
-//     const avgBudget = await eventModel.aggregate([
-//       { $match: { user_id: userId, budget: { $exists: true, $ne: null } } },
-//       { $group: { _id: null, avg: { $avg: '$budget' } } }
-//     ]);
+    // Average budget per event
+    const avgBudget = await eventModel.aggregate([
+      { $match: { user_id: userId, budget: { $exists: true, $ne: null } } },
+      { $group: { _id: null, avg: { $avg: '$budget' } } }
+    ]);
 
-//     // Top event types
-//     const eventTypes = await eventModel.aggregate([
-//       { $match: { user_id: userId } },
-//       { $group: { _id: '$event_type', count: { $sum: 1 } } },
-//       { $sort: { count: -1 } },
-//       { $limit: 5 }
-//     ]);
+    // Top event types
+    const eventTypes = await eventModel.aggregate([
+      { $match: { user_id: userId } },
+      { $group: { _id: '$event_type', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 }
+    ]);
 
-//     // Upcoming events
-//     const upcomingEvents = await eventModel.countDocuments({
-//       user_id: userId,
-//       event_date: { $gte: new Date() },
-//       status: { $in: ['draft', 'planning', 'confirmed'] }
-//     });
+    // Upcoming events
+    const upcomingEvents = await eventModel.countDocuments({
+      user_id: userId,
+      event_date: { $gte: new Date() },
+      status: { $in: ['draft', 'planning', 'confirmed'] }
+    });
 
-//     const analytics = {
-//       totalEvents,
-//       eventsByStatus,
-//       totalBookings,
-//       bookingsByStatus,
-//       totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
-//       recentEvents,
-//       monthlyEvents,
-//       avgBudget: avgBudget.length > 0 ? avgBudget[0].avg : 0,
-//       eventTypes,
-//       upcomingEvents
-//     };
+    const analytics = {
+      totalEvents,
+      eventsByStatus,
+      totalBookings,
+      bookingsByStatus,
+      totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
+      recentEvents,
+      monthlyEvents,
+      avgBudget: avgBudget.length > 0 ? avgBudget[0].avg : 0,
+      eventTypes,
+      upcomingEvents
+    };
 
-//     res.json({ success: true, analytics });
-//   } catch (error) {
-//     res.json({ success: false, message: error.message });
-//   }
-// };
+    res.json({ success: true, analytics });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
 
 // Get vendor analytics (if user is a vendor)
 export const getVendorAnalytics = async (req, res) => {
