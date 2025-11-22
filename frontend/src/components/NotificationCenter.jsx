@@ -1,6 +1,6 @@
 import { Bell, Calendar, CheckCircle, DollarSign, MessageSquare, Users, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import {mockNotifications} from '../assets/assets.js'
+import { mockNotifications } from '../assets/assets.js'
 import { AuthContext } from '../contexts/AuthContext'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
@@ -31,17 +31,30 @@ const NotificationCenter = () => {
         } else {
           toast.error(data.message || 'Failed to load notifications');
         }
-      }catch (error) {
+      } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to fetch notifications');
       }
     }
 
     fetchNotifications();
-  },[backendUrl])
+  }, [backendUrl])
 
-  const markAsRead = (notificationId) => {
-    setNotifications(prev => prev.map(n => n.id === notificationId ? {...n, read_status: true} : n))
+  const markAsRead = async (notificationId) => {
+    try {
+      const { data } = await axios.put(backendUrl + '/api/notifications/mark-read', { notificationId });
+
+      if (data.success) {
+        setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read_status: true } : n));
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      } else {
+        toast.error(data.message || 'Could not mark notification');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Server error');
+    }
   }
+
+  
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read_status: true }))
@@ -87,7 +100,7 @@ const NotificationCenter = () => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return 'Just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
@@ -137,7 +150,7 @@ const NotificationCenter = () => {
                 {
                   notifications.length === 0 ? (
                     <div className="p-6 text-center text-[rgb(var(--muted-foreground))]">
-                      <Bell className='h-8 w-8 mx-auto mb-2 opacity-50' /> 
+                      <Bell className='h-8 w-8 mx-auto mb-2 opacity-50' />
                       <p>No notifications yet</p>
                     </div>
                   ) : (
@@ -149,7 +162,7 @@ const NotificationCenter = () => {
                           return (
                             <div key={notification.id} className={`p-4 border-b border-[rgb(var(--border))] hover:bg-[rgba(var(--muted),0.5)] cursor-pointer transition-all ${!notification.read_status ? 'bg-[rgba(var(--primary),0.1)]' : ''}`} onClick={() => markAsRead(notification.id)}>
                               <div className="flex items-start space-x-3">
-                                <Icon className={`h-5 w-5 mt-0.5 ${getNotificationColor(notification.type)}`}/>
+                                <Icon className={`h-5 w-5 mt-0.5 ${getNotificationColor(notification.type)}`} />
                                 <div className='flex-1 min-w-0'>
                                   <p className={`text-sm ${!notification.read_status ? 'font-medium' : ''}`}>
                                     {notification.message}
