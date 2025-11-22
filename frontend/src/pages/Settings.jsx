@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useContext, useState } from 'react'
 import toast from "react-hot-toast"
 import Header from "../components/Header"
 import { ArrowLeft, Bell, CreditCard, Shield, User } from 'lucide-react';
@@ -8,8 +7,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
 
 const Settings = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(true)
+  const { user, token, backendUrl, navigate } = useContext(AuthContext);
   
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
