@@ -2,7 +2,7 @@ import express from "express"
 import { createVendor, getAllVendors, getVendorById, getVendorDashboard, removePortfolioImage, updateVendorProfile, uploadPortfolioImages, uploadVendorImage } from "../controllers/vendorController.js";
 import { userAuth } from "../middleware/userAuth.js";
 import { getVendorBookings, updateBookingStatus } from "../controllers/bookingController.js";
-import { getVendorReviews } from "../controllers/reviewController.js";
+import { getVendorReviews } from "../controllers/reviewControler.js";
 import upload from "../middleware/multer.js";
 
 const vendorRouter = express.Router();
