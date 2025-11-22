@@ -77,10 +77,14 @@ const Header = () => {
             <Link to="/vendors" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
               Vendors
             </Link>
-
-            <Link to="/dashboard" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
-              Dashboard
-            </Link>
+            {
+              user && (
+                <Link to="/dashboard" className="text-[rgb(var(--foreground))] font-medium hover:text-[rgb(var(--primary))] transition-all duration-300">
+                  Dashboard
+                </Link>
+              )
+            }
+            
           </nav>
 
 
