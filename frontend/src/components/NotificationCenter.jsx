@@ -54,12 +54,20 @@ const NotificationCenter = () => {
     }
   }
 
-  
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read_status: true }))
-    );
-    setUnreadCount(0);
+  const markAllAsRead = async () => {
+    try {
+      const { data } = await axios.put(backendUrl + '/api/notifications/mark-all-read');
+
+      if (data.success) {
+        setNotifications(prev => prev.map(n => ({ ...n, read_status: true })));
+        setUnreadCount(0);
+      } else {
+        toast.error(data.message || 'Could not mark all read');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Server error');
+    }
   };
 
   const getNotificationIcon = (type) => {
