@@ -1,87 +1,91 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import { booking, eventsData } from '../assets/assets';
 import {  Calendar, Clock, DollarSign, LogOut, MapPin, Plus, Settings, Sparkles, Star, Users } from 'lucide-react';
+import { AuthContext } from '../contexts/AuthContext';
+import { HashLoader } from 'react-spinners';
+import axios from 'axios';
 
 const Dashboard = () => {
-  const [user, setUser] = useState([])
-  const [loading, setLoading] = useState(false)
-
-  const navigate = useNavigate();
+  const {backendUrl, user, setUser, setIsAuthenticated, navigate, loading, setLoading} = useContext(AuthContext)
 
   const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [loadingData, setLoadingData] = useState(true);
 
   const [activeTab, setActiveTab] = useState("events");
 
   useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([fetchUserEvents(), fetchUserBookings()]);
+    };
+
     if (!loading && !user) {
       navigate('/auth');
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
-    if (user) {
-      fetchUserData();
+    } else if(user) {
+      loadData();
     }
   }, [user]);
 
-  const fetchUserData = async () => {
-    setLoadingData(true)
+
+  // Fetch user events
+  const fetchUserEvents  = async () => {
+    setLoading(true)
 
     try {
-      // // Fetch user events
-      // const { data: eventsData, error: eventsError } = await supabase
-      //   .from('events')
-      //   .select('*')
-      //   .eq('user_id', user?.id)
-      //   .order('event_date', { ascending: true });
-
-      // if (eventsError) throw eventsError;
-
-      // // Fetch user bookings with vendor info
-      // const { data: bookingsData, error: bookingsError } = await supabase
-      //   .from('bookings')
-      //   .select(`
-      //     *,
-      //     vendors:vendor_id (
-      //       business_name,
-      //       category
-      //     )
-      //   `)
-      //   .eq('user_id', user?.id)
-      //   .order('booking_date', { ascending: false });
-
-      // if (bookingsError) throw bookingsError;
-
-      setEvents(eventsData || []);
-      setBookings(booking || []);
+      const { data } = await axios.get(`${backendUrl}/api/events/user`);
+      if (data.success) {
+        setEvents(data.events);
+      } else {
+        toast.error(data.message || "Failed to load events");
+      }
     } catch (error) {
-        toast.error(error.message)
+      toast.error(error.message || "Error loading events");
     } finally {
-      setLoadingData(false);
+      setLoading(false);
     }
   };
 
-  const handleSignOut = async () => {
+  // Fetch user bookings
+  const fetchUserBookings = async () => {
     try {
-      // await signOut();
-      // navigate('/');
-      // toast({
-      //   title: "Signed Out",
-      //   description: "You have been successfully signed out.",
-      // });
+      const { data } = await axios.get(`${backendUrl}/api/bookings/user`);
+      if (data.success) {
+        setBookings(data.bookings);
+      } else {
+        toast.error(data.message || "Failed to load bookings");
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error("Error loading bookings");
     }
+  };
+
+
+  const handleSignOut = async () => {
+    setLoading(true)
+
+    try {
+      const {data} = await axios.post(backendUrl + "/api/auth/logout")
+
+      if (data.success) {
+        toast.success(data.message)
+        setUser(null)
+        setIsAuthenticated(false)
+        navigate('/auth')
+      } else {
+        return toast.error(data.message)
+      }
+      
+    } catch (error) {
+      console.log(error.message);
+      toast.error(data.message)
+    } finally{
+      setLoading(false)
+    }   
   };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
     }).format(amount);
   };
 
@@ -98,16 +102,12 @@ const Dashboard = () => {
   const totalBudget = events.reduce((sum, event) => sum + (event.budget || 0), 0);
   const totalGuests = events.reduce((sum, event) => sum + event.guest_count, 0);
 
-  if (loading || loadingData) {
+  
+  if (loading) {
     return (
-      <div className="min-h-screen gradient-hero flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[rgb(var(--primary))] mx-auto"></div>
-          <p className="text-[rgb(var(--muted-foreground))]">
-            Loading your dashboard...
-          </p>
-        </div>
-      </div>
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
     );
   }
 
@@ -175,9 +175,9 @@ const Dashboard = () => {
                 {events.length}
               </div>
               <div className="flex items-center space-x-2">
-                <span className={`status-dot ${upcomingEvents.length > 0 ? 'status-confirmed' : 'status-pending'}`}></span>
+                <span className={`status-dot ${upcomingEvents?.length > 0 ? 'status-confirmed' : 'status-pending'}`}></span>
                 <p className="text-sm text-[rgb(var(--muted-foreground))]">
-                  {upcomingEvents.length} upcoming
+                  {upcomingEvents?.length} upcoming
                 </p>
               </div>
             </div>
@@ -334,7 +334,7 @@ const Dashboard = () => {
                               </div>
 
                               <div className="pt-4 border-t border-[rgb(var(--border))]">
-                                <button className="inline-flex w-full items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-9 px-4 btn-hero interactive-element cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}  >
+                                <button className="inline-flex w-full items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-9 px-4 btn-hero interactive-element cursor-pointer" onClick={() => navigate(`/events/${event._id}`)}  >
                                   <Sparkles className="h-4 w-4 mr-2" />
                                   View Event Details
                                 </button>
@@ -382,12 +382,12 @@ const Dashboard = () => {
                     ) : (
                       <div className="space-y-4">
                         {bookings.map((booking) => (
-                          <div key={booking.id} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-hover">
+                          <div key={booking._id} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-hover">
                             <div className='flex flex-col space-y-1.5 p-6'>
                               <div className="flex items-center justify-between">
                                 
                                 <div className="font-semibold leading-none tracking-tight text-lg">
-                                  {booking.vendors?.business_name}
+                                  {booking.vendor_id?.business_name}
                                 </div>
 
                                 <div className={`inline-flex items-center rounded-full text-xs font-medium px-3 py-0.5 ${booking.status.toLowerCase() === 'confirmed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'}`}>
@@ -396,7 +396,7 @@ const Dashboard = () => {
                               </div>
 
                               <div className='text-sm text-[rgb(var(--muted-foreground))]'>
-                                {booking.vendors?.category} • {formatCurrency(booking.total_amount)}
+                                {(booking.vendor_id?.category).charAt(0).toUpperCase() + (booking.vendor_id?.category).slice(1)} • {formatCurrency(booking.total_amount)}
                               </div>
                             </div>
 
@@ -484,7 +484,7 @@ const Dashboard = () => {
                       </div>
                     </div>
 
-                    <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-9 px-6 cursor-pointer w-full btn-hero interactive-element" onClick={() => navigate(`/events/${upcomingEvents[0].id}`)}  >
+                    <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-9 px-6 cursor-pointer w-full btn-hero interactive-element" onClick={() => navigate(`/events/${upcomingEvents[0]._id}`)}  >
                       <Sparkles className="h-4 w-4 mr-2" />
                       View Details
                     </button>
