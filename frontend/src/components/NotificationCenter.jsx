@@ -1,17 +1,43 @@
 import { Bell, Calendar, CheckCircle, DollarSign, MessageSquare, Users, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {mockNotifications} from '../assets/assets.js'
+import { AuthContext } from '../contexts/AuthContext'
+import axios from 'axios'
+import { toast } from 'react-hot-toast'
 
 const NotificationCenter = () => {
 
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const { backendUrl } = useContext(AuthContext)
 
   useEffect(() => {
-    setNotifications(mockNotifications)
-    setUnreadCount(mockNotifications.filter(n => !n.read_status).length)
-  }, [])
+    const fetchNotifications = async () => {
+      try {
+        const { data } = await axios.get(backendUrl + '/api/notifications');
+
+        if (data.success) {
+          const list = data.notifications.map(n => ({
+            id: n._id || n.id,
+            type: n.type,
+            message: n.message,
+            read_status: !!n.read_status,
+            created_at: n.createdAt || n.created_at || n.created_at
+          }));
+
+          setNotifications(list);
+          setUnreadCount(list.filter(n => !n.read_status).length);
+        } else {
+          toast.error(data.message || 'Failed to load notifications');
+        }
+      }catch (error) {
+        toast.error(error.response?.data?.message || 'Failed to fetch notifications');
+      }
+    }
+
+    fetchNotifications();
+  },[backendUrl])
 
   const markAsRead = (notificationId) => {
     setNotifications(prev => prev.map(n => n.id === notificationId ? {...n, read_status: true} : n))
