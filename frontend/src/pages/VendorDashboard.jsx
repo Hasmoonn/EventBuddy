@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { booking, reviewsData } from '../assets/assets';
 import toast from 'react-hot-toast';
+import { HashLoader } from 'react-spinners';
 import { Building, Calendar, DollarSign, Edit, Mail, MapPin, MessageSquare, Phone, Star, TrendingUp } from 'lucide-react';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const VendorDashboard = () => {
+  const {backendUrl, user, loading, setLoading, navigate} = useContext(AuthContext);
+
   const [vendorProfile, setVendorProfile] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [activeTab, setActiveTab] = useState("profile");
-  const [user, setUser] = useState(true);
 
   const [analytics, setAnalytics] = useState({
     totalBookings: 0,
     totalRevenue: 0,
     averageRating: 0,
-    responseRate: 95
+    responseRate: 95,
+    monthlyBookings: 0
   });
 
   const [isEditing, setIsEditing] = useState(false);
+
   const [editForm, setEditForm] = useState({
     business_name: '',
     description: '',
@@ -25,149 +31,107 @@ const VendorDashboard = () => {
     contact_email: '',
     contact_phone: '',
     price_range_min: '',
-    price_range_max: ''
+    price_range_max: '',
+    location: ''
   });
 
   useEffect(() => {
-    fetchVendorData();
-  }, []);
+    if(!user?.is_vendor) {
+      navigate('/vendor/create-vendor');
+    }
+
+    fetchVendorData()
+  }, [user]);
+
 
   const fetchVendorData = async () => {
+    setLoading(true)
+
     try {
 
       if (!user)
         return;
 
       // Fetch vendor profile
-      const vendor = {
-        id: "1",
-        business_name: "Elegant Events Decor",
-        category: "decoration",
-        description:
-          "Providing premium wedding and event decoration services with custom themes and designs.",
-        location: "Colombo",
-        price_range_min: 50000,
-        price_range_max: 150000,
-        rating: 4.7,
-        total_reviews: 120,
-        image: "/placeholder.svg",
-        portfolio_images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
-        verified: true,
-        available: true,
-        contact_email: "contact@elegantevents.com",
-        contact_phone: "+94711234567",
-        services: ["Wedding Decor", "Corporate Events", "Birthday Parties", "Birthday Parties", "Event Parties"],
-        user_id: "U001"
+      const {data} = await axios.get(backendUrl + '/api/vendors/dashboard')
+
+      if (!data.success) {
+        return toast.error(data.message)
       }
 
-      if (vendor) {
-        setVendorProfile(vendor);
+      setVendorProfile(data.vendorProfile)
+      setBookings(data.bookings || [])
+      setReviews(data.reviews || [])
+      setAnalytics(data.analytics)
 
-        setEditForm({
-          business_name: vendor.business_name || '',
-          description: vendor.description || '',
-          services: vendor.services || [],
-          contact_email: vendor.contact_email || '',
-          contact_phone: vendor.contact_phone || '',
-          price_range_min: vendor.price_range_min?.toString() || '',
-          price_range_max: vendor.price_range_max?.toString() || ''
-        });
+      setEditForm({
+        business_name: data.vendorProfile.business_name || '',
+        description: data.vendorProfile.description || '',
+        services: data.vendorProfile.services || [],
+        contact_email: data.vendorProfile.contact_email || '',
+        contact_phone: data.vendorProfile.contact_phone || '',
+        price_range_min: data.vendorProfile.price_range_min?.toString() || '',
+        price_range_max: data.vendorProfile.price_range_max?.toString() || '',
+        location: data.vendorProfile.location || ''
+      });
 
-        // Fetch bookings
-
-        setBookings(booking || []);
-
-        // Fetch reviews
-
-        setReviews(reviewsData || []);
-
-        // Calculate analytics
-        const totalRevenue = booking?.reduce((sum, booking) =>
-          sum + (booking.status === 'confirmed' ? Number(booking.total_amount) : 0), 0) || 0;
-
-        const confirmedBookings = booking?.filter(b => b.status === 'confirmed').length || 0;
-
-        const avgRating = reviewsData?.length > 0
-          ? reviewsData.reduce((sum, review) => sum + review.rating, 0) / reviewsData.length
-          : 0;
-
-        setAnalytics({
-          totalBookings: confirmedBookings,
-          totalRevenue,
-          averageRating: Math.round(avgRating * 10) / 10,
-          responseRate: 95
-        });
-      }
     } catch (error) {
-      toast.error(error.message)
+        toast.error(error.message)
+    } finally{
+      setLoading(false)
     }
   };
 
+
   const updateVendorProfile = async () => {
     try {
-      // const { data: { user } } = await supabase.auth.getUser();
-      // if (!user || !vendorProfile) return;
 
-      // const { error } = await supabase
-      //   .from('vendors')
-      //   .update({
-      //     business_name: editForm.business_name,
-      //     description: editForm.description,
-      //     services: editForm.services,
-      //     contact_email: editForm.contact_email,
-      //     contact_phone: editForm.contact_phone,
-      //     website_url: editForm.website_url,
-      //     price_range_min: editForm.price_range_min ? Number(editForm.price_range_min) : null,
-      //     price_range_max: editForm.price_range_max ? Number(editForm.price_range_max) : null
-      //   })
-      //   .eq('id', vendorProfile.id);
+      if (!user) {
+        return
+      }
+      
+      const {data} = await axios.put(backendUrl + '/api/vendors/update', editForm)
 
-      // if (error) throw error;
+      if (!data.success) {
+        return toast.error(data.message)
+      }
 
       setIsEditing(false);
       fetchVendorData();
 
-      // toast({
-      //   title: "Profile Updated",
-      //   description: "Your vendor profile has been updated successfully",
-      // });
+      toast.success(data.message)
     } catch (error) {
       toast.error(error.message)
     }
   };
+
 
   const updateBookingStatus = async (bookingId, status) => {
     try {
-      // const { error } = await supabase
-      //   .from('bookings')
-      //   .update({ status })
-      //   .eq('id', bookingId);
+      const {data} = await axios.put(backendUrl + `/api/vendors/bookings/${bookingId}/status`, { status })
 
-      // if (error) throw error;
+      if (!data.success) {
+        return toast.error(data.message)
+      }
 
-      // setBookings(prev => 
-      //   prev.map(b => b.id === bookingId ? { ...b, status } : b)
-      // );
+       // Update local state
+      setBookings(prev => prev.map(b => b._id === bookingId ? { ...b, status } : b)
+      );
 
-      // toast({
-      //   title: "Booking Updated",
-      //   description: `Booking ${status} successfully`,
-      // });
+      toast.success(data.message);
+      fetchVendorData();
     } catch (error) {
       toast.error(error.message)
     }
   };
 
-  // const getStatusColor = (status) => {
-  //   switch (status) {
-  //     case 'confirmed': return 'bg-green-100 text-green-800';
-  //     case 'pending': return 'bg-yellow-100 text-yellow-800';
-  //     case 'cancelled': return 'bg-red-100 text-red-800';
-  //     default: return 'bg-gray-100 text-gray-800';
-  //   }
-  // };
 
-  if (!vendorProfile) {
+  const handleCreateProfile = () => {
+    navigate('/vendor/create-vendor');
+  };
+
+
+  if (!vendorProfile && user?.is_vendor) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm' >
@@ -178,13 +142,26 @@ const VendorDashboard = () => {
               Set up your vendor profile to start receiving bookings
             </p>
 
-            <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-11 px-6 py-3'>
+            <button onClick={handleCreateProfile} className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-11 px-6 py-3'>
               Create Profile
             </button>
           </div>
         </div>
       </div>
     );
+  }
+
+
+  if (loading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
+    );
+  }
+
+  if (!vendorProfile) {
+    return null
   }
 
 
@@ -231,7 +208,7 @@ const VendorDashboard = () => {
               <DollarSign className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
             </div>
             <div className='p-6 pt-0'>
-              <div className="text-2xl font-bold">${analytics.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold">LKR {analytics.totalRevenue.toLocaleString()}</div>
               <div className="flex items-center text-xs text-[rgb(var(--muted-foreground))]">
                 <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
                 +18% from last month
@@ -288,7 +265,7 @@ const VendorDashboard = () => {
             ))}
           </div>
 
-          {activeTab === "profile" && (
+          {activeTab === "profile" && vendorProfile && (
             <div className="space-y-6">
               {/* Profile content (same as your TabsContent for profile) */}
               <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
@@ -398,9 +375,20 @@ const VendorDashboard = () => {
                           <div className="flex items-center space-x-2">
                             <DollarSign className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
                             <span>
-                              ${vendorProfile.price_range_min?.toLocaleString()} - ${vendorProfile.price_range_max?.toLocaleString()}
+                              Lkr {vendorProfile.price_range_min?.toLocaleString()} - Lkr {vendorProfile.price_range_max?.toLocaleString()}
                             </span>
                           </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-medium mb-2">Services</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {vendorProfile.services?.map((service, index) => (
+                            <span key={index} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))]">
+                              {service}
+                            </span>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -421,12 +409,12 @@ const VendorDashboard = () => {
                 <div className='p-6 pt-0'>
                   <div className="space-y-4">
                     {bookings.map((booking) => (
-                      <div key={booking.id} className="p-4 border border-border rounded-lg">
+                      <div key={booking._id} className="p-4 border border-border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <div>
-                            <h4 className="font-medium">{booking.events?.title}</h4>
+                            <h4 className="font-medium">{booking.event_id?.title}</h4>
                             <p className="text-sm text-[rgb(var(--muted-foreground))]">
-                              by {booking.profiles?.full_name}
+                              by {booking.user_id?.name}
                             </p>
                           </div>
                           <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${booking.status.toLowerCase() === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800' : booking.status.toLowerCase() === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'} `}>
@@ -448,29 +436,33 @@ const VendorDashboard = () => {
                               Amount:
                             </span>
                             <p>
-                              ${Number(booking.total_amount).toLocaleString()}
+                              Lkr. {Number(booking.total_amount).toLocaleString()}
                             </p>
                           </div>
+
                           <div>
-                            <span className="font-medium">
-                              Service:
-                            </span>
-                            <p>
-                              {booking.service_description}
-                            </p>
+                            <span className="font-medium">Event Type:</span>
+                            <p>{booking.event_id?.event_type || 'N/A'}</p>
                           </div>
+
+                          {booking.service_description && (
+                            <div className="mt-2">
+                              <span className="font-medium text-sm">Service Description:</span>
+                              <p className="text-sm text-[rgb(var(--muted-foreground))]">{booking.service_description}</p>
+                            </div>
+                          )}
                         </div>
 
                         {booking.status.toLowerCase() === 'pending' && (
                           <div className="flex space-x-2 mt-4">
                             <button className='inline-flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 h-9 rounded-lg px-4 py-2 cursor-pointer'
-                              onClick={() => updateBookingStatus(booking.id, 'confirmed')}
+                              onClick={() => updateBookingStatus(booking._id, 'Confirmed')}
                             >
                               Accept
                             </button>
 
                             <button className='inline-flex items-center justify-center transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 rounded-lg px-4 py-2 cursor-pointer'
-                              onClick={() => updateBookingStatus(booking.id, 'cancelled')}
+                              onClick={() => updateBookingStatus(booking._id, 'Cancelled')}
                             >
                               Decline
                             </button>
@@ -494,12 +486,12 @@ const VendorDashboard = () => {
                 </div>
                 <div className='p-6 pt-0'>
                   <div className="space-y-4">
-                    {reviews.map((review) => (
-                      <div key={review.id} className="p-4 border border-border rounded-lg">
+                    {reviews.map((review, index) => (
+                      <div key={index} className="p-4 border border-border rounded-lg">
                         <div className="flex items-start space-x-4">
                           <div className="h-10 w-10 gradient-primary rounded-full flex items-center justify-center">
                             <span className="text-white font-medium">
-                              {review.profiles?.full_name?.[0]?.toUpperCase() || 'U'}
+                              {review.user_id?.name?.[0]?.toUpperCase() || 'U'}
                             </span>
                           </div>
                           <div className="flex-1">
@@ -528,10 +520,12 @@ const VendorDashboard = () => {
               </div>
             </div>
           )}
+
+
           {activeTab === "analytics" && (
             <div className="space-y-6">
               {/* Analytics content */}
-              <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
                 <div className='rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm'>
                   <div className='flex flex-col space-y-1.5 p-6'>
                     <div className='text-2xl font-semibold leading-none tracking-tight text-gradient'>
@@ -547,7 +541,7 @@ const VendorDashboard = () => {
                         </span>
 
                         <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
-                          78%
+                          {analytics.bookingConversionRate}%
                         </div>
                       </div>
 
@@ -557,7 +551,7 @@ const VendorDashboard = () => {
                         </span>
 
                         <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
-                          2.5 hours
+                          {analytics.responseRate}% response rate
                         </div>
                       </div>
 
@@ -566,7 +560,19 @@ const VendorDashboard = () => {
                           Repeat Customer Rate
                         </span>
 
-                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>35%</div>
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          {analytics.repeatCustomerRate}%
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Total Reviews
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          {analytics.totalReviews}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -587,27 +593,37 @@ const VendorDashboard = () => {
                         </span>
 
                         <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]' >
-                          {Math.floor(analytics.totalBookings * 0.3)}
+                          {analytics.monthlyBookings}
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <span className="text-sm">
-                          Revenue Growth
+                          Monthly Revenue
                         </span>
 
                         <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
-                          +18%
+                          Lkr {analytics.monthlyRevenue.toLocaleString()}
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <span className="text-sm">
-                          Profile Views
+                          Total Bookings
                         </span>
 
                         <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
-                          1,247
+                          {analytics.totalBookings}
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">
+                          Total Revenue
+                        </span>
+
+                        <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>
+                          Lkr {analytics.totalRevenue.toLocaleString()}
                         </div>
                       </div>
                     </div>

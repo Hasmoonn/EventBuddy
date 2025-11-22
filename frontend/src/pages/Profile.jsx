@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { ArrowLeft, Settings, Shield, User } from 'lucide-react';
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
+import { HashLoader } from 'react-spinners';
 
 const Profile = () => {
-  const [user, setUser] = useState(true);
-  const navigate = useNavigate();
+  const {backendUrl, user, setUser, navigate, loading, setLoading} = useContext(AuthContext);
 
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const [activeTab, setActiveTab] = useState("profile");
@@ -25,32 +25,24 @@ const Profile = () => {
 
     setLoading(true)
 
-    try {
-      const data = {
-        id: "1",
-        user_id: "U001",
-        full_name: "Aarav Kumar",
-        phone: "+91 9876543210",
-        avatar_url: "https://randomuser.me/api/portraits/men/32.jpg",
-        bio: "Passionate event planner with 5+ years of experience in weddings and corporate events.",
-        location: "Bangalore, India",
-        is_vendor: true
-      }
+    try {      
+      const {data} = await axios.get(`${backendUrl}/api/profile`, { withCredentials: true });
 
-      if (data) {
-        setProfile(data);
+      if (data.success) {
+        setProfile(data.user);
       } else {
         // Create a new profile
         const newProfile = {
           id: "",
           user_id: user.id,
-          full_name: user.user_metadata?.full_name || "",
+          name: user.user_metadata?.full_name || "",
           phone: "",
           avatar_url: "",
           bio: "",
           location: "",
           is_vendor: false
         };
+        
         setProfile(newProfile);
       }
     } catch (error) {
@@ -67,28 +59,27 @@ const Profile = () => {
     setSaving(true);
 
     try {
-      // const { error } = await supabase
-      //   .from("profiles")
-      //   .upsert({
-      //     user_id: user.id,
-      //     full_name: profile.full_name,
-      //     phone: profile.phone,
-      //     avatar_url: profile.avatar_url,
-      //     bio: profile.bio,
-      //     location: profile.location,
-      //     is_vendor: profile.is_vendor
-      //   });
+      const { data } = await axios.put(`${backendUrl}/api/profile`, {
+        name: profile.name,
+        phone: profile.phone,
+        bio: profile.bio,
+        location: profile.location,
+        is_vendor: profile.is_vendor,
+      }, { withCredentials: true });
 
-      // if (error) throw error;
+      if (data.success) {
+        toast.success("Profile updated successfully!");
+        setUser(data.user);
+        setProfile(data.user);
 
-      // toast({
-      //   title: "Profile updated",
-      //   description: "Your profile has been successfully updated.",
-      // });
+        setTimeout(() => navigate('/'), 1000)
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-      toast.error(error.message)
+        toast.error(error.message)
     } finally {
-      setSaving(false);
+        setSaving(false);
     }
   };
 
@@ -99,16 +90,11 @@ const Profile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  if (loading) {
+  if (loading || saving) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[rgb(var(--background))] to-[rgba(var(--accent),0.2)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[rgb(var(--primary))] mx-auto mb-4"></div>
-          <p className="text-[rgb(var(--muted-foreground))]">
-            Loading profile...
-          </p>
-        </div>
-      </div>
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
     );
   }
 
@@ -153,12 +139,12 @@ const Profile = () => {
               <div className="p-6 pt-0 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className='text-sm font-medium leading-none ' htmlFor="full_name">Full Name</label>
+                    <label className='text-sm font-medium leading-none ' htmlFor="name">Name</label>
 
                     <input className="flex w-full h-10 rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      id="full_name"
-                      value={profile?.full_name || ""}
-                      onChange={(e) => updateProfile("full_name", e.target.value)}
+                      id="name"
+                      value={profile?.name || ""}
+                      onChange={(e) => updateProfile("name", e.target.value)}
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -227,7 +213,7 @@ const Profile = () => {
                 <div className="space-y-2">
                   <label className='text-sm font-medium leading-none'>Account Created</label>
                   <input className="flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--muted))] px-3 py-2 text-sm ring-offset-background placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : ""}
+                    value={user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""}
                     disabled
                   />
                 </div>
@@ -257,7 +243,7 @@ const Profile = () => {
                   </div>
                   <input type='checkbox'
                     checked={profile?.is_vendor || false}
-                    onCheckedChange={(checked) => updateProfile("is_vendor", checked)}
+                    onChange={(e) => updateProfile("is_vendor", e.target.checked)}
                   />
                 </div>
 
@@ -269,7 +255,7 @@ const Profile = () => {
                     </p>
 
                     <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 h-11 px-6 py-3 cursor-pointer border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 mt-2"
-                      onClick={() => navigate("/vendors")}
+                      onClick={() => navigate("/vendor/create-vendor")}
                     >
                       Manage Vendor Profile
                     </button>

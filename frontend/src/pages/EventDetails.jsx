@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
-import { eventsData } from '../assets/assets';
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import EventForm from '../components/EventForm';
 import { ArrowLeft, Calendar, Edit, MapPin, Trash2, Users } from 'lucide-react';
 import GuestManagement from '../components/GuestManagement';
 import BookingsList from '../components/BookingsList';
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
+import { HashLoader } from 'react-spinners';
+
 
 const EventDetails = () => {
 
   const { id } = useParams();
-  const [user, setUser] = useState({ id: "U001"});
-  const navigate = useNavigate();
+  const {backendUrl, user, navigate, loading, setLoading} = useContext(AuthContext);
   
   const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
 
   const [activeTab, setActiveTab] = useState("guests");
@@ -32,65 +33,57 @@ const EventDetails = () => {
     try {
       setLoading(true);
 
-      // const { data, error } = await supabase
-      //   .from("events")
-      //   .select("*")
-      //   .eq("id", id)
-      //   .eq("user_id", user.id)
-      //   .single();
+      const { data } = await axios.get(`${backendUrl}/api/events/${id}`);
 
-      // if (error) throw error;
-      const foundEvent = eventsData.find((ev) => ev.id === id && ev.user_id === user.id);
-
-      if (!foundEvent) {
-        toast.error("Event not found")
+      if (data.success) {
+        setEvent(data.event);
+      } else {
+        toast.error(data.message || "Failed to load event");
+        navigate("/dashboard");
+        return;
       }
-
-      setEvent(foundEvent);
     } catch (error) {
         toast.error(error.message)
         navigate("/dashboard");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
   const handleDelete = async () => {
     if (!event || !user) 
       return;
-    
-    const confirmed = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this event? This action cannot be undone."
+    );
+
     if (!confirmed) 
       return;
 
     try {
-      // const { error } = await supabase
-      //   .from("events")
-      //   .delete()
-      //   .eq("id", event.id)
-      //   .eq("user_id", user.id);
+      setLoading(true);
+      const { data } = await axios.delete(`${backendUrl}/api/events/${event._id}`);
 
-      // if (error) throw error;
-
-      // toast({
-      //   title: "Event deleted",
-      //   description: "Your event has been successfully deleted.",
-      // });
-      // navigate("/dashboard");
+      if (data.success) {
+        toast.success(data.message);
+        navigate("/dashboard");
+      } else {
+        toast.error(data.message || "Failed to delete event");
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message || "Error deleting event");
+    } finally {
+      setLoading(false);
     }
   };
 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[rgb(var(--background))] to-[rgba(var(--accent),0.2)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[rgb(var(--primary))] mx-auto mb-4"></div>
-          <p className="text-[rgb(var(--muted-foreground))]">Loading event...</p>
-        </div>
-      </div>
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
     );
   }
 
@@ -109,7 +102,12 @@ const EventDetails = () => {
 
   if (editing) {
     return (
-      <EventForm event={event} onSave={(updatedEvent) => { setEvent(updatedEvent); setEditing(false);  }} onCancel={() => setEditing(false)} />
+      <EventForm event={event} onSave={(updatedEvent) => {
+        setEvent(updatedEvent);
+        setEditing(false);
+      }}
+
+      onCancel={() => setEditing(false)} backendUrl={backendUrl} />
     );
   }
 
@@ -131,7 +129,7 @@ const EventDetails = () => {
                 </div>
 
                 <span className="text-sm">
-                  Created {new Date(event.created_at).toLocaleDateString()}
+                  Created At {new Date(event.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
@@ -158,7 +156,7 @@ const EventDetails = () => {
                 <span className="font-medium">Date & Time</span>
               </div>
               <p className="text-sm text-[rgb(var(--muted-foreground))]">
-                {new Date(event.event_date).toLocaleString()}
+                {event?.event_date ? new Date(event.event_date).toLocaleString() : "Not specified"}
               </p>
             </div>
           </div>
@@ -211,12 +209,12 @@ const EventDetails = () => {
 
           {
             activeTab === "guests" && 
-            <GuestManagement eventId={event.id} />
+            <GuestManagement eventId={event._id} />
           }
 
           {
             activeTab === "bookings" && 
-            <BookingsList eventId={event.id} />
+            <BookingsList eventId={event._id} />
           }
         </div>
       </div>

@@ -1,6 +1,6 @@
-import express from "express";
-import { userAuth } from "../middleware/userAuth.js";
-import { getVendorReviews, submitReview, getUserBookings, editReview, deleteReview } from "../controllers/reviewController.js";
+import express from 'express';
+import { userAuth } from '../middleware/userAuth.js';
+import { getVendorReviews, submitReview, getUserBookings, editReview, deleteReview } from '../controllers/reviewControler.js';
 
 const reviewRouter = express.Router();
 
