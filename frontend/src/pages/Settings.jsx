@@ -4,6 +4,8 @@ import toast from "react-hot-toast"
 import Header from "../components/Header"
 import { ArrowLeft, Bell, CreditCard, Shield, User } from 'lucide-react';
 import { users } from '../assets/assets';
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const Settings = () => {
   const navigate = useNavigate();
