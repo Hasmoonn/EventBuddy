@@ -101,8 +101,13 @@ const Header = () => {
                         <Link to="/profile" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Profile</Link>
                         <Link to="/settings" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Settings</Link>
                         <Link to="/dashboard" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Dashboard</Link>
-                        <Link to="/vendor-dashboard" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Vendor Dashboard</Link>
-                        <Link to="/admin" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Admin Panel</Link>
+                        {user?.is_vendor && (
+                          <Link to="/vendor-dashboard" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Vendor Dashboard</Link>
+                        )}
+
+                        {localStorage.getItem('adminToken') && (
+                          <Link to="/admin" className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300'>Admin Panel</Link>
+                        )}
                         <hr className='mb-1' />
                         <button className='rounded-md w-full py-1 px-3 hover:bg-[rgb(var(--primary-glow),0.2)] hover:text-[rgb(var(--primary))] transition-all duration-300 flex gap-2 items-center' onClick={handleLogout}>
                           <LogOut className='h-4 w-4' />
