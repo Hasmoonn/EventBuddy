@@ -58,3 +58,26 @@ export const getNotifications = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+export const markAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { notificationId } = req.body;
+
+    if (!notificationId) return res.status(400).json({ success: false, message: 'notificationId is required' });
+
+    const updated = await notificationModel.findOneAndUpdate(
+      { _id: notificationId, user_id: userId },
+      { read_status: true },
+      { new: true }
+    );
+
+    if (!updated) return res.status(404).json({ success: false, message: 'Notification not found' });
+
+    res.json({ success: true, notification: updated });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
