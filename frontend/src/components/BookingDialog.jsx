@@ -1,7 +1,6 @@
 import { Calendar, DollarSign, X } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import { eventsData } from '../assets/assets';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -21,15 +20,20 @@ const BookingDialog = ({ vendor, open, onClose }) => {
   });
 
   const fetchUserEvents = async () => {
-    if (!user) 
+    if (!user)
       return;
-    
+
     setLoading(true);
 
     try {
-      setEvents(eventsData)
+      const { data } = await axios.get(`${backendUrl}/api/events/user`);
+      if (data.success) {
+        setEvents(data.events);
+      } else {
+        toast.error(data.message || "Failed to load events");
+      }
     } catch (error) {
-        toast.error(error.message)
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
