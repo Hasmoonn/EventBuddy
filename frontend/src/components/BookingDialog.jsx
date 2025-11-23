@@ -2,6 +2,8 @@ import { Calendar, DollarSign, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { eventsData } from '../assets/assets';
+import axios from 'axios';
+import { AuthContext } from '../contexts/AuthContext';
 
 const BookingDialog = ({ vendor, open, onClose }) => {
 
@@ -73,7 +75,7 @@ const BookingDialog = ({ vendor, open, onClose }) => {
 
 
 
-  // don’t render if closed
+  // don't render if closed
   if (!open) 
     return null;
 
