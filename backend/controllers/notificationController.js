@@ -36,3 +36,15 @@ export const updateNotificationSettings = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const createNotification = async ({ user_id, type, message }) => {
+  try {
+    const notification = new notificationModel({ user_id, type, message });
+    await notification.save();
+    return notification;
+  } catch (error) {
+    console.error('Failed to create notification', error);
+    throw error;
+  }
+};
+
