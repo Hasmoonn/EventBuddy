@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { ArrowLeft, Calendar, DollarSign, MapPin, Users } from 'lucide-react';
 import toast from 'react-hot-toast'
+import axios from 'axios'
 
-const EventForm = ({ event, onSave, onCancel }) => {
+const EventForm = ({ event, onSave, onCancel, backendUrl }) => {
 
   const [loading, setLoading] = useState(false);
 
@@ -43,12 +44,29 @@ const EventForm = ({ event, onSave, onCancel }) => {
     setLoading(true)
 
     try {
+      const dataToSend = {
+        ...formData,
+        guest_count: formData.guest_count ? parseInt(formData.guest_count) : undefined,
+        budget: formData.budget ? parseFloat(formData.budget) : undefined
+      };
 
+      let response;
+      if (event._id) {
+        // Update existing event
+        response = await axios.put(`${backendUrl}/api/events/${event._id}`, dataToSend);
+      } else {
+        // Create new event
+        response = await axios.post(`${backendUrl}/api/events`, dataToSend);
+      }
 
-
-      // onSave()
+      if (response.data.success) {
+        toast.success(response.data.message);
+        onSave(response.data.event);
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-        toast.error(error.message)
+        toast.error(error.response?.data?.message || error.message)
     }finally{
       setLoading(false)
     }
@@ -68,11 +86,11 @@ const EventForm = ({ event, onSave, onCancel }) => {
           </button>
 
           <h1 className="text-4xl font-bold text-gradient mb-2">
-            Edit Event
+            {event._id ? "Edit Event" : "Create Event"}
           </h1>
 
           <p className="text-[rgb(var(--muted-foreground))]">
-            Update your event details
+            {event._id ? "Update your event details" : "Fill in your event details"}
           </p>
         </div>
 
@@ -84,7 +102,7 @@ const EventForm = ({ event, onSave, onCancel }) => {
             </div>
 
             <div className='text-sm text-[rgb(var(--muted-foreground))]'>
-              Update the details for your event.
+              {event._id ? "Update the details for your event." : "Fill in the details for your new event."}
             </div>
           </div>
 
@@ -182,7 +200,7 @@ const EventForm = ({ event, onSave, onCancel }) => {
 
               <div className="flex gap-4 pt-2">
                 <button type="submit" disabled={loading} className="inline-flex items-center justify-center rounded-lg text-sm font-medium ring-offset-[rgb(var(--background))] transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] hover:scale-105 active:scale-95 flex-1 cursor-pointer h-9 px-6">
-                  {loading ? "Saving..." : "Save Changes"}
+                  {loading ? "Saving..." : (event._id ? "Save Changes" : "Create Event")}
                 </button>
 
                 <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 cursor-pointer h-9 px-6' type="button"  onClick={onCancel} >
