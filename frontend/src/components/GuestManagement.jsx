@@ -1,9 +1,12 @@
 import { Edit, Mail, Phone, Trash2, UserPlus, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import { guestsData } from '../assets/assets';
+import axios from 'axios';
+import { AuthContext } from '../contexts/AuthContext';
 
 const GuestManagement = ({ eventId }) => {
+
+  const { backendUrl } = useContext(AuthContext);
 
   const [guests, setGuests] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,22 +23,62 @@ const GuestManagement = ({ eventId }) => {
   });
 
   const fetchGuests = async () => {
+    if (!eventId) return;
+
+    setLoading(true);
     try {
-      setGuests(guestsData)
+      const { data } = await axios.get(`${backendUrl}/api/guests/${eventId}`);
+      if (data.success) {
+        setGuests(data.guests);
+      } else {
+        toast.error(data.message || "Failed to load guests");
+      }
     } catch (error) {
-        toast.error(error.message)
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      
+      const guestData = {
+        name: guestForm.name,
+        email: guestForm.email,
+        phone: guestForm.phone,
+        rsvp_status: guestForm.rsvp_status,
+        plus_one: guestForm.plus_one,
+        dietary_restrictions: guestForm.dietary_restrictions
+      };
+
+      let response;
+      if (editingGuest) {
+        response = await axios.put(`${backendUrl}/api/guests/${eventId}/${editingGuest._id}`, guestData);
+      } else {
+        response = await axios.post(`${backendUrl}/api/guests/${eventId}`, guestData);
+      }
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setShowAddDialog(false);
+        setEditingGuest(null);
+        setGuestForm({
+          name: "",
+          email: "",
+          phone: "",
+          rsvp_status: "pending",
+          plus_one: false,
+          dietary_restrictions: ""
+        });
+        fetchGuests(); // Refresh the guest list
+      } else {
+        toast.error(response.data.message || "Failed to save guest");
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -54,13 +97,19 @@ const GuestManagement = ({ eventId }) => {
 
   const handleDelete = async (guestId) => {
     const confirmed = window.confirm("Are you sure you want to remove this guest?");
-    if (!confirmed) 
+    if (!confirmed)
       return;
 
     try {
-      
+      const { data } = await axios.delete(`${backendUrl}/api/guests/${eventId}/${guestId}`);
+      if (data.success) {
+        toast.success(data.message);
+        fetchGuests(); // Refresh the guest list
+      } else {
+        toast.error(data.message || "Failed to delete guest");
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -256,7 +305,7 @@ const GuestManagement = ({ eventId }) => {
           ) : (
             <div className="space-y-4">
               {guests.map((guest) => (
-                <div key={guest.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-[rgba(var(--accent),0.3)] transition-all">
+                <div key={guest._id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-[rgba(var(--accent),0.3)] transition-all">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h4 className="font-medium">
@@ -311,7 +360,7 @@ const GuestManagement = ({ eventId }) => {
                       <Edit className="w-4 h-4" />
                     </button>
 
-                    <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 h-9 px-4 py-2 cursor-pointer' onClick={() => handleDelete(guest.id)}
+                    <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 hover:bg-[rgb(var(--accent))] hover:text-[rgb(var(--accent-foreground))] hover:scale-105 active:scale-95 h-9 px-4 py-2 cursor-pointer' onClick={() => handleDelete(guest._id)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
