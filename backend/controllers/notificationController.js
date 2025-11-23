@@ -48,3 +48,13 @@ export const createNotification = async ({ user_id, type, message }) => {
   }
 };
 
+export const getNotifications = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const notifications = await notificationModel.find({ user_id: userId }).sort({ createdAt: -1 });
+    res.json({ success: true, notifications });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
