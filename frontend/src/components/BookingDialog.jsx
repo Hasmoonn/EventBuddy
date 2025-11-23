@@ -8,8 +8,8 @@ const BookingDialog = ({ vendor, open, onClose }) => {
 
   const {user, backendUrl} = useContext(AuthContext)
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const {loading, setLoading} = useState(false)
   
   const [bookingForm, setBookingForm] = useState({
     event_id: "",
@@ -42,25 +42,39 @@ const BookingDialog = ({ vendor, open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user) 
+    if (!user)
       return;
-    
+
     setSubmitting(true);
 
     try {
+      const bookingData = {
+        vendor_id: vendor._id,
+        event_id: bookingForm.event_id,
+        booking_date: bookingForm.booking_date,
+        service_description: bookingForm.service_description,
+        notes: bookingForm.notes,
+        total_amount: bookingForm.total_amount || undefined
+      };
 
-      // Reset form and close dialog
-      setBookingForm({
-        event_id: "",
-        booking_date: "",
-        service_description: "",
-        notes: "",
-        total_amount: ""
-      });
+      const { data } = await axios.post(`${backendUrl}/api/bookings`, bookingData);
 
-      onClose()
+      if (data.success) {
+        toast.success(data.message);
+        // Reset form and close dialog
+        setBookingForm({
+          event_id: "",
+          booking_date: "",
+          service_description: "",
+          notes: "",
+          total_amount: ""
+        });
+        onClose();
+      } else {
+        toast.error(data.message || "Failed to send booking request");
+      }
     } catch (error) {
-      
+      toast.error(error.message);
     } finally {
       setSubmitting(false);
     }
@@ -79,7 +93,7 @@ const BookingDialog = ({ vendor, open, onClose }) => {
 
 
 
-  // don't render if closed
+  // don’t render if closed
   if (!open) 
     return null;
 
@@ -87,7 +101,7 @@ const BookingDialog = ({ vendor, open, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="relative w-full max-w-lg rounded-lg bg-white p-6 shadow-lg max-h-[95vh] overflow-y-auto">
         {/* Close Button */}
-        <button onClick={onClose} className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"  >
+        <button onClick={onClose} className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"  >
           <X className="h-5 w-5" />
         </button>
 
@@ -105,14 +119,11 @@ const BookingDialog = ({ vendor, open, onClose }) => {
             {loading ? (
               <div className="h-10 bg-[rgb(var(--muted))] rounded-md animate-pulse" />
             ) : (
-              <select className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' placeholder="Choose an event" 
-                value={bookingForm.event_id}
-                onChange={(value) => updateForm("event_id", value)}
-                required
+              <select className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' placeholder="Choose an event" value={bookingForm.event_id} onChange={(e) => updateForm("event_id", e.target.value)} required
               >                                 
                 {
                   events.map((event, index) => (
-                    <option key={index} value={event.id}>
+                    <option key={index} value={event._id}>
                       {event.title} - {new Date(event.event_date).toLocaleDateString()}
                     </option>
                   ))
@@ -161,7 +172,7 @@ const BookingDialog = ({ vendor, open, onClose }) => {
               type="number"
               value={bookingForm.total_amount}
               onChange={(e) => updateForm("total_amount", e.target.value)}
-              placeholder={`Budget range: $${vendor.price_range_min?.toLocaleString()} - $${vendor.price_range_max?.toLocaleString()}`}
+              placeholder={`Budget range: Lkr ${vendor.price_range_min?.toLocaleString()} - Lkr ${vendor.price_range_max?.toLocaleString()}`}
               min="0"
               step="0.01"
             />
