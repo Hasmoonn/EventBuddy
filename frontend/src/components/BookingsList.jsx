@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { booking } from '../assets/assets.js';
 import { Calendar, Eye, Mail, MapPin, Phone } from 'lucide-react';
+import { AuthContext } from '../contexts/AuthContext.jsx';
+import axios from 'axios';
+import { HashLoader } from "react-spinners";
 
 const BookingsList = ({ eventId }) => {
 
