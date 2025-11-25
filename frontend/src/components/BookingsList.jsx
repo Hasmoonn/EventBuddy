@@ -20,7 +20,7 @@ const BookingsList = ({ eventId }) => {
 
       if (data.success) {
         setBookings(data.bookings);
-      }else {
+      } else {
         toast.error(data.message)
         setBookings([])
       }
@@ -41,10 +41,10 @@ const BookingsList = ({ eventId }) => {
 
   if (loading) {
     return (
-          <div className='min-h-screen flex items-center justify-center'>
-            <HashLoader color='#D8B4FE' />
-          </div> 
-        );
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div>
+    );
   }
 
 
@@ -79,7 +79,7 @@ const BookingsList = ({ eventId }) => {
               <div className="text-sm text-[rgb(var(--muted-foreground))]">Confirmed</div>
             </div>
             <div className="text-center p-4 bg-blue-500/10 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">${totalAmount.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-blue-600">LKR {totalAmount.toLocaleString()}</div>
               <div className="text-sm text-[rgb(var(--muted-foreground))]">Total Amount</div>
             </div>
           </div>
@@ -96,16 +96,16 @@ const BookingsList = ({ eventId }) => {
           ) : (
             <div className="space-y-4">
               {bookings.map((booking) => (
-                <div key={booking.id} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--muted-foreground))] shadow-sm border-l-4 border-l-[rgb(var(--primary))]">
+                <div key={booking._id} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--muted-foreground))] shadow-sm border-l-4 border-l-[rgb(var(--primary))]">
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h4 className="font-semibold text-lg mb-1">
-                          {booking.vendor.business_name}
+                          {booking.vendor_id?.business_name || "Vendor Name"}
                         </h4>
                         <div className="flex items-center gap-2 mb-2">
                           <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]">
-                            {booking.vendor.category}
+                            {booking.vendor_id.category}
                           </div>
                           <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${booking.status.toLowerCase() === 'confirmed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : booking.status.toLowerCase() === 'pending' ? 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]' : booking.status.toLowerCase() === 'cancelled' ? 'border-transparent bg-[rgb(var(--destructive))] text-[rgb(var(--destructive-foreground))] hover:bg-[rgba(var(--destructive),0.8)]' : booking.status.toLowerCase() === 'completed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'}`} >
                             {booking.status}
@@ -115,10 +115,12 @@ const BookingsList = ({ eventId }) => {
 
                       <div className="text-right">
                         <div className="text-lg font-bold text-[rgb(var(--primary))]">
-                          ${booking.total_amount?.toLocaleString() || "TBD"}
+                          LKR {booking.total_amount?.toLocaleString() || "TBD"}
                         </div>
                         <div className="text-sm text-[rgb(var(--muted-foreground))]">
-                          {new Date(booking.booking_date).toLocaleDateString()}
+                          {booking.booking_date
+                            ? new Date(booking.booking_date).toLocaleDateString()
+                            : "—"}
                         </div>
                       </div>
                     </div>
@@ -145,25 +147,25 @@ const BookingsList = ({ eventId }) => {
                       <div className="flex items-center gap-4 text-sm text-[rgb(var(--muted-foreground))]">
                         <div className="flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
-                          {booking.vendor.location}
+                          {booking.vendor_id.location}
                         </div>
 
-                        {booking.vendor.contact_email && (
+                        {booking.vendor_id.contact_email && (
                           <div className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
-                            {booking.vendor.contact_email}
+                            {booking.vendor_id.contact_email}
                           </div>
                         )}
 
-                        {booking.vendor.contact_phone && (
+                        {booking.vendor_id.contact_phone && (
                           <div className="flex items-center gap-1">
                             <Phone className="w-3 h-3" />
-                            {booking.vendor.contact_phone}
+                            {booking.vendor_id.contact_phone}
                           </div>
                         )}
                       </div>
 
-                      <button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 py-2 cursor-pointer" onClick={() => navigate(`/vendors/${booking.vendor.id}`)}
+                      <button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 py-2 cursor-pointer" onClick={() => navigate(`/vendors/${booking.vendor_id?._id}`)}
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         View Vendor
