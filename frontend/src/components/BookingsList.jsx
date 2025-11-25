@@ -41,13 +41,10 @@ const BookingsList = ({ eventId }) => {
 
   if (loading) {
     return (
-      <div className="rounded-lg border bg-card text-[rgb(var(--card-foreground))] shadow-sm card-elegant">
-        <div className="p-6 pt-0 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[rgb(var(--primary))] mx-auto mb-4"></div>
-          <p className="text-[rgb(var(--muted-foreground))]">Loading bookings...</p>
-        </div>
-      </div>
-    );
+          <div className='min-h-screen flex items-center justify-center'>
+            <HashLoader color='#D8B4FE' />
+          </div> 
+        );
   }
 
 
