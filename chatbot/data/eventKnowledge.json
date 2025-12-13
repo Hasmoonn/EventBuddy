@@ -1,0 +1,114 @@
+{
+  "eventTypes": {
+    "wedding": {
+      "essentialVendors": ["venue", "caterer", "photographer", "decorator", "entertainment"],
+      "typicalBudgetRanges": {
+        "small": "LKR 500,000 - 1,000,000",
+        "medium": "LKR 1,000,000 - 2,500,000",
+        "large": "LKR 2,500,000+"
+      },
+      "planningTimeline": "6-12 months",
+      "checklist": [
+        "Set budget and guest list",
+        "Book venue",
+        "Hire caterer",
+        "Book photographer/videographer",
+        "Arrange decoration and flowers",
+        "Plan entertainment and music",
+        "Send invitations",
+        "Finalize menu and seating",
+        "Arrange transportation",
+        "Plan rehearsal"
+      ]
+    },
+    "birthday": {
+      "essentialVendors": ["venue", "caterer", "decorator", "entertainment"],
+      "typicalBudgetRanges": {
+        "small": "LKR 50,000 - 150,000",
+        "medium": "LKR 150,000 - 500,000",
+        "large": "LKR 500,000+"
+      },
+      "planningTimeline": "1-3 months",
+      "checklist": [
+        "Decide on theme and venue",
+        "Create guest list",
+        "Book venue and caterer",
+        "Order cake",
+        "Plan decorations",
+        "Arrange entertainment",
+        "Send invitations",
+        "Plan activities and games",
+        "Prepare party favors"
+      ]
+    },
+    "corporate": {
+      "essentialVendors": ["venue", "caterer", "av_equipment", "photographer"],
+      "typicalBudgetRanges": {
+        "small": "LKR 200,000 - 500,000",
+        "medium": "LKR 500,000 - 1,500,000",
+        "large": "LKR 1,500,000+"
+      },
+      "planningTimeline": "2-6 months",
+      "checklist": [
+        "Define event objectives",
+        "Set budget and date",
+        "Book venue with AV capabilities",
+        "Arrange catering",
+        "Plan agenda and speakers",
+        "Organize transportation",
+        "Setup registration system",
+        "Prepare promotional materials",
+        "Arrange technical support",
+        "Plan post-event follow-up"
+      ]
+    }
+  },
+  "vendorCategories": [
+    "Venue",
+    "Caterer",
+    "Photographer",
+    "Videographer",
+    "Decorator",
+    "Florist",
+    "Entertainment",
+    "DJ/Music",
+    "Makeup Artist",
+    "Transportation",
+    "Cake Designer",
+    "Event Planner"
+  ],
+  "faqs": [
+    {
+      "question": "How do I book a vendor on EventBuddy?",
+      "answer": "Browse vendors in the marketplace, filter by your preferences, view their availability calendar, and click 'Book Now' on their profile. You can pay securely through our integrated payment gateway."
+    },
+    {
+      "question": "Can I collaborate with others while planning?",
+      "answer": "Yes! EventBuddy supports real-time collaboration. You can invite family members or team members to co-plan events with shared access."
+    },
+    {
+      "question": "How does the AI planning assistant work?",
+      "answer": "Our AI assistant provides personalized checklists, budget optimization, timeline suggestions, and smart vendor recommendations based on your event type, budget, and preferences."
+    },
+    {
+      "question": "Are payments secure?",
+      "answer": "Absolutely. We use industry-standard payment gateways (Stripe/PayPal) with PCI-compliant processing and fraud prevention measures."
+    },
+    {
+      "question": "Can I see vendor availability before booking?",
+      "answer": "Yes! Vendors update their availability calendars in real-time, so you can see open dates and book only available slots."
+    }
+  ],
+  "platformFeatures": [
+    "AI-powered event planning tools",
+    "Vendor marketplace with real-time availability",
+    "Secure online booking and payments",
+    "Guest list and RSVP management",
+    "Budget optimization tools",
+    "Real-time collaboration",
+    "Direct vendor communication (message/call/email)",
+    "Vendor reviews and ratings",
+    "Eco-friendly vendor recommendations",
+    "Smart scheduling and reminders"
+  ]
+}
