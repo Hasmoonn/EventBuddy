@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Mail, MapPin, MessageCircle, Phone, Search, Star } from 'lucide-react'
 import toast from 'react-hot-toast';
-import {vendors} from '../assets/assets.js'
 import {categoryIcons} from '../assets/assets.js'
+import axios from "axios"
+import { AuthContext } from '../contexts/AuthContext.jsx';
+import { HashLoader } from 'react-spinners';
 
 const Vendors = () => {
 
-  const [vendor, setVendor] = useState([]);
+  const {backendUrl, user, isAuthenticated, loading, setLoading} = useContext(AuthContext);
+
+  const [vendors, setVendors] = useState([]);
   const [filteredVendors, setFilteredVendors] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -17,10 +20,17 @@ const Vendors = () => {
 
   const fetchVendors = async () => {
     setLoading(true)
+
     try {
-      setVendor(vendors)
+      const {data} = await axios.get(backendUrl + '/api/vendors')
+
+      if (!data.success) {
+        return toast.error(data.message)
+      }
+
+      setVendors(data.vendors)
     } catch (error) {
-        toast.error('error occured')
+        toast.error(error.message)
     } finally {
       setLoading(false)
     }
@@ -59,7 +69,7 @@ const Vendors = () => {
   const formatCurrency = (min, max) => {
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
       maximumFractionDigits: 0,
     });
     
@@ -99,6 +109,7 @@ const Vendors = () => {
   const getIconForCategory = (category) => {
     if (!category) 
       return Star
+
     const catLower = category.toLowerCase()
 
     const key = Object.keys(categoryIcons).find((k) =>
@@ -131,12 +142,9 @@ const Vendors = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen gradient-hero flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[rgb(var(--primary))] mx-auto"></div>
-          <p className="text-[rgb(var(--muted-foreground))]">Loading vendors...</p>
-        </div>
-      </div>
+      <div className='min-h-screen flex items-center justify-center'>
+        <HashLoader color='#D8B4FE' />
+      </div> 
     );
   }
 
@@ -161,12 +169,17 @@ const Vendors = () => {
             </Link>
 
             <div className="flex items-center space-x-4">
-              <Link to="/auth">
-                <button className='hidden sm:inline-flex py-1.5 px-6 rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 cursor-pointer'>Sign In</button>
-              </Link>
-              <Link to="/dashboard">
-                <button className="inline-flex items-center justify-center gap-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 btn-hero">Dashboard</button>
-              </Link>
+              {
+                !user && !isAuthenticated ? (
+                  <Link to="/auth">
+                    <button className='hidden sm:inline-flex py-1.5 px-6 rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 cursor-pointer'>Sign In</button>
+                  </Link>
+                ) : (
+                <Link to="/dashboard">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 btn-hero">Dashboard</button>
+                </Link>
+                )
+              }              
             </div>
           </div>
         </div>
@@ -239,10 +252,10 @@ const Vendors = () => {
                 const IconComponent = getIconForCategory(vendor.category)
                 
                 return (
-                  <Link to={`/vendors/${vendor.id}`} key={vendor.id} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-vendor animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }} >
+                  <Link to={`/vendors/${vendor._id}`} key={vendor._id} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm card-vendor animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }} >
                     <div className="flex flex-col space-y-1.5 p-6 pb-3">
                       <div className="flex items-start justify-between">
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-between w-full">
                           <div className="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12">
                             <div className='flex h-full w-full items-center justify-center rounded-full bg-[rgb(var(--muted))]'>
                               <IconComponent className="h-6 w-6 text-[rgb(var(--primary))]" />

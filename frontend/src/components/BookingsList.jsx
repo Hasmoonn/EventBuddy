@@ -6,17 +6,17 @@ import axios from 'axios';
 import { HashLoader } from "react-spinners";
 
 const BookingsList = ({ eventId }) => {
-
-  const { backendUrl, navigate } = useContext(AuthContext);
+  
+  const { backendUrl, navigate} = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchBookings = async () => {
 
     setLoading(true)
 
     try {
-      const { data } = await axios.get(`${backendUrl}/api/bookings/user?eventId=${eventId}`)
+      const {data} = await axios.get(`${backendUrl}/api/bookings/user?eventId=${eventId}`)
 
       if (data.success) {
         setBookings(data.bookings);
@@ -26,13 +26,14 @@ const BookingsList = ({ eventId }) => {
       }
     } catch (error) {
       toast.error('error in fetching')
+      setBookings([])
     } finally {
       setLoading(false)
     }
   }
 
   const totalAmount = bookings.reduce((sum, booking) => sum + (booking.total_amount || 0), 0);
-  const confirmedBookings = bookings.filter(b => b.status === "confirmed").length;
+  const confirmedBookings = bookings.filter(b => b.status.toLowerCase() === "confirmed").length;
 
   useEffect(() => {
     fetchBookings();
@@ -43,10 +44,9 @@ const BookingsList = ({ eventId }) => {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <HashLoader color='#D8B4FE' />
-      </div>
+      </div> 
     );
   }
-
 
   return (
     <div className="space-y-6">
@@ -149,14 +149,14 @@ const BookingsList = ({ eventId }) => {
                           <MapPin className="w-3 h-3" />
                           {booking.vendor_id.location}
                         </div>
-
+                        
                         {booking.vendor_id.contact_email && (
                           <div className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
                             {booking.vendor_id.contact_email}
                           </div>
                         )}
-
+                        
                         {booking.vendor_id.contact_phone && (
                           <div className="flex items-center gap-1">
                             <Phone className="w-3 h-3" />

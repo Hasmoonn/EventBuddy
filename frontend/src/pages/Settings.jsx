@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useContext, useState } from 'react'
 import toast from "react-hot-toast"
 import Header from "../components/Header"
 import { ArrowLeft, Bell, CreditCard, Shield, User } from 'lucide-react';
-import { users } from '../assets/assets';
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const Settings = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(true)
-  
+  const { user, token, backendUrl, navigate } = useContext(AuthContext);
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -29,40 +28,89 @@ const Settings = () => {
 
     if (user) {
       fetchProfile();
+      fetchNotificationSettings();
     }
   }, [user, navigate]);
 
 
   const fetchProfile = async () => {
-    setLoading(true)
-
     try {
-      setProfile(users)
+      const { data } = await axios.get(`${backendUrl}/api/profile/get-profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (data.success) {
+        setProfile(data.user);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-        toast.error(error.message)
+      toast.error(error.response?.data?.message || "Failed to fetch profile");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateProfile = async (updates) => {
-    if (!user) 
+  const fetchNotificationSettings = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/profile/get-notification-settings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (data.success) {
+        setNotifications(data.settings);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to fetch notification settings");
+    }
+  };
+
+  const updateProfile = async () => {
+    if (!user)
       return;
-    
+
     setUpdating(true);
     try {
-      
+      const { data } = await axios.put(`${backendUrl}/api/profile/update-profile`, profile, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (data.success) {
+        toast.success("Profile updated successfully");
+        setProfile(data.user);
+
+        // Redirect to vendor profile form if user checked "I am a vendor"
+        if (profile?.is_vendor) {
+          navigate("/vendor/create-vendor");
+        }
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || "Failed to update profile");
     } finally {
       setUpdating(false);
     }
   };
 
   // function to update a specific setting
-  const updateNotificationSettings = (key, value) => {
-    setNotifications((prev) => ({ ...prev, [key]: value }));
-    toast.success("Notification settings updated!")
+  const updateNotificationSettings = async (key, value) => {
+    try {
+      const { data } = await axios.put(`${backendUrl}/api/profile/update-notification-settings`, { [key]: value }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (data.success) {
+        setNotifications((prev) => ({ ...prev, [key]: value }));
+        toast.success("Notification settings updated!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update notification settings");
+    }
   };
 
   if (loading) {
@@ -137,8 +185,8 @@ const Settings = () => {
 
                       <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                         id="full_name"
-                        value={profile?.full_name || ""}
-                        onChange={(e) => setProfile(prev => prev ? { ...prev, full_name: e.target.value } : null)}
+                        value={profile?.name || ""}
+                        onChange={(e) => setProfile(prev => prev ? { ...prev, name: e.target.value } : null)}
                         placeholder="Enter your full name"
                       />
                     </div>
@@ -230,7 +278,7 @@ const Settings = () => {
                       </div>
                       <input type='checkbox'
                         checked={notifications.email_reminders}
-                        onChange={(e) => updateNotificationSettings('email_bookings', e.target.checked)}
+                        onChange={(e) => updateNotificationSettings('email_reminders', e.target.checked)}
                       />
                     </div>
 
@@ -245,7 +293,7 @@ const Settings = () => {
                       </div>
                       <input type='checkbox'
                         checked={notifications.sms_notifications}
-                        onChange={(e) => updateNotificationSettings('email_bookings', e.target.checked)}
+                        onChange={(e) => updateNotificationSettings('sms_notifications', e.target.checked)}
                       />
                     </div>
 
@@ -260,7 +308,7 @@ const Settings = () => {
                       </div>
                       <input type='checkbox'
                         checked={notifications.marketing_emails}
-                        onChange={(e) => updateNotificationSettings('email_bookings', e.target.checked)}
+                        onChange={(e) => updateNotificationSettings('marketing_emails', e.target.checked)}
                       />
                     </div>
                   </div>

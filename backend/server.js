@@ -13,6 +13,7 @@ import guestRouter from "./routes/guestRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import analyticsRouter from "./routes/analyticsRoutes.js";
+import notificationRouter from "./routes/notificationRoutes.js";
 
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/api/guests", guestRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/analytics", analyticsRouter);
+app.use("/api/notifications", notificationRouter);
 
 
 app.listen(port, () => {

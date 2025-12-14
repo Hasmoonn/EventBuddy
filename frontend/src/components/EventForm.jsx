@@ -66,8 +66,8 @@ const EventForm = ({ event, onSave, onCancel, backendUrl }) => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message)
-    } finally {
+        toast.error(error.response?.data?.message || error.message)
+    }finally{
       setLoading(false)
     }
   }
