@@ -6,12 +6,12 @@ import axios from 'axios';
 import { HashLoader } from "react-spinners";
 
 const BookingsList = ({ eventId }) => {
-
+  
   const { backendUrl, navigate} = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchBookings = async () =>{
+  const fetchBookings = async () => {
 
     setLoading(true)
 
@@ -21,14 +21,14 @@ const BookingsList = ({ eventId }) => {
       if (data.success) {
         setBookings(data.bookings);
       } else {
-        toast.error(data.message);
-        setBookings([]);
+        toast.error(data.message)
+        setBookings([])
       }
     } catch (error) {
-        toast.error('Error fetching bookings')
-        setBookings([]);
+      toast.error('error in fetching')
+      setBookings([])
     } finally {
-        setLoading(false)
+      setLoading(false)
     }
   }
 
@@ -62,7 +62,7 @@ const BookingsList = ({ eventId }) => {
                 Manage your vendor bookings and services
               </div>
             </div>
-            
+
             <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--primary-glow))] text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-glow))] h-9 px-5 hover:scale-105 active:scale-95 cursor-pointer' onClick={() => navigate("/vendors")}>
               Browse Vendors
             </button>
@@ -107,12 +107,12 @@ const BookingsList = ({ eventId }) => {
                           <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]">
                             {booking.vendor_id.category}
                           </div>
-                          <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${booking.status.toLowerCase() === 'confirmed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : booking.status.toLowerCase() === 'pending' ? 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]' : booking.status.toLowerCase() === 'cancelled' ? 'border-transparent bg-[rgb(var(--destructive))] text-[rgb(var(--destructive-foreground))] hover:bg-[rgba(var(--destructive),0.8)]' : booking.status.toLowerCase() === 'completed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]' }`} >
+                          <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${booking.status.toLowerCase() === 'confirmed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : booking.status.toLowerCase() === 'pending' ? 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]' : booking.status.toLowerCase() === 'cancelled' ? 'border-transparent bg-[rgb(var(--destructive))] text-[rgb(var(--destructive-foreground))] hover:bg-[rgba(var(--destructive),0.8)]' : booking.status.toLowerCase() === 'completed' ? 'border-transparent bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:bg-[rgba(var(--primary),0.8)]' : 'border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'}`} >
                             {booking.status}
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="text-right">
                         <div className="text-lg font-bold text-[rgb(var(--primary))]">
                           LKR {booking.total_amount?.toLocaleString() || "TBD"}
@@ -164,8 +164,8 @@ const BookingsList = ({ eventId }) => {
                           </div>
                         )}
                       </div>
-                      
-                      <button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 py-2 cursor-pointer"  onClick={() => navigate(`/vendors/${booking.vendor_id?._id}`)}
+
+                      <button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 h-9 px-4 py-2 cursor-pointer" onClick={() => navigate(`/vendors/${booking.vendor_id?._id}`)}
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         View Vendor

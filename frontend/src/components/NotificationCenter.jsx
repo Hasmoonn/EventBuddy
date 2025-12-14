@@ -1,5 +1,5 @@
 import { Bell, Calendar, CheckCircle, DollarSign, MessageSquare, Users, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { mockNotifications } from '../assets/assets.js'
 import { AuthContext } from '../contexts/AuthContext'
 import axios from 'axios'
