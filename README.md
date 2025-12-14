@@ -8,41 +8,41 @@ EventBuddy is a web-based event planning platform that simplifies organizing eve
 
 - User & vendor registration with role-based access
 
-Event creation and management
+- Event creation and management
 
-AI-powered checklists, budgeting, and scheduling
+- AI-powered checklists, budgeting, and scheduling
 
-Vendor marketplace with reviews and ratings
+- Vendor marketplace with reviews and ratings
 
-Real-time vendor availability & calendar booking
+- Real-time vendor availability & calendar booking
 
-Secure online payments
+- Secure online payments
 
-Guest list and RSVP management
+- Guest list and RSVP management
 
-One-click communication with vendors
+- One-click communication with vendors
 
-Admin panel for platform management
+- Admin panel for platform management
 
 ## 🛠️ Technology Stack
 
-Frontend: React.js
+- Frontend: React.js
 
-Backend: Node.js, Express.js
+- Backend: Node.js, Express.js
 
-Database: MongoDB / MySQL
+- Database: MongoDB / MySQL
 
-AI Services: OpenAI API (planned)
+- AI Services: OpenAI API (planned)
 
-Payments: Stripe / PayPal (planned)
+- Payments: Stripe / PayPal (planned)
 
 ## 👥 Team – Group 12
 
-21CSE0149 – B.M.D.W. Dayananda
+- 21CSE0149 – B.M.D.W. Dayananda
 
-21CSE0146 – M.A.R.M. Hasmoon
+- 21CSE0146 – M.A.R.M. Hasmoon
 
-21CSE0195 – O.N.H. Munasingha
+- 21CSE0195 – O.N.H. Munasingha
 
 ## 👨‍🏫 Supervision
 
