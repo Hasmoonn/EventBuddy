@@ -6,9 +6,9 @@ import { getNotificationSettings, updateNotificationSettings } from "../controll
 
 const profileRouter = express.Router();
 
-router.get("/get-profile", userAuth, getProfile);
-router.put("/update-profile", userAuth, updateProfile);
-router.get("/get-notification-settings", userAuth, getNotificationSettings);
-router.put("/update-notification-settings", userAuth, updateNotificationSettings);
+profileRouter.get("/get-profile", userAuth, getProfile);
+profileRouter.put("/update-profile", userAuth, updateProfile);
+profileRouter.get("/get-notification-settings", userAuth, getNotificationSettings);
+profileRouter.put("/update-notification-settings", userAuth, updateNotificationSettings);
 
 export default profileRouter;
