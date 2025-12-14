@@ -134,11 +134,11 @@ const EventForm = ({ event, onSave, onCancel, backendUrl }) => {
                 <div className="space-y-2">
                   <label className='text-sm font-medium leading-none' htmlFor="status">Status</label>
                   <select className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' value={formData.status} onChange={(e) => handleInputChange("status", e.target.value)} placeholder="Select status" >
-                      {eventStatuses.map((status, index) => (
-                        <option key={index} value={status.value}>
-                          {status.label}
-                        </option>
-                      ))}
+                    {eventStatuses.map((status, index) => (
+                      <option key={index} value={status.value}>
+                        {status.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -164,16 +164,16 @@ const EventForm = ({ event, onSave, onCancel, backendUrl }) => {
                     Location *
                   </label>
 
-                  <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' id="location" placeholder="Event location"  value={formData.location} onChange={(e) => handleInputChange("location", e.target.value)} required
+                  <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' id="location" placeholder="Event location" value={formData.location} onChange={(e) => handleInputChange("location", e.target.value)} required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className='text-sm font-medium leading-none'  htmlFor="event_date">
+                  <label className='text-sm font-medium leading-none' htmlFor="event_date">
                     Date & Time *
                   </label>
 
-                  <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' id="event_date" type="datetime-local"  value={formData.event_date} onChange={(e) => handleInputChange("event_date", e.target.value)} required />
+                  <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' id="event_date" type="datetime-local" value={formData.event_date} onChange={(e) => handleInputChange("event_date", e.target.value)} required />
                 </div>
               </div>
 
@@ -194,7 +194,7 @@ const EventForm = ({ event, onSave, onCancel, backendUrl }) => {
                     Budget
                   </label>
 
-                  <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' id="budget"  type="number"  placeholder="Event budget" value={formData.budget} onChange={(e) => handleInputChange("budget", e.target.value)} min="0" step="0.01" />
+                  <input className='flex h-10 w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm' id="budget" type="number" placeholder="Event budget" value={formData.budget} onChange={(e) => handleInputChange("budget", e.target.value)} min="0" step="0.01" />
                 </div>
               </div>
 
@@ -203,7 +203,7 @@ const EventForm = ({ event, onSave, onCancel, backendUrl }) => {
                   {loading ? "Saving..." : (event._id ? "Save Changes" : "Create Event")}
                 </button>
 
-                <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 cursor-pointer h-9 px-6' type="button"  onClick={onCancel} >
+                <button className='inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 border-2 border-[rgb(var(--primary))] text-[rgb(var(--primary))] bg-transparent hover:bg-[rgb(var(--primary))] hover:text-[rgb(var(--primary-foreground))] hover:shadow-[rgb(var(--shadow-soft))] hover:scale-105 active:scale-95 cursor-pointer h-9 px-6' type="button" onClick={onCancel} >
                   Cancel
                 </button>
               </div>
