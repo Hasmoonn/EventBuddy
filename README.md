@@ -30,7 +30,7 @@ EventBuddy is a web-based event planning platform that simplifies organizing eve
 
 - Backend: Node.js, Express.js
 
-- Database: MongoDB / MySQL
+- Database: MongoDB
 
 - AI Services: OpenAI API (planned)
 
