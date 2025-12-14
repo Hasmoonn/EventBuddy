@@ -6,7 +6,7 @@ EventBuddy is a web-based event planning platform that simplifies organizing eve
 
 ## 🎯 Key Features
 
-User & vendor registration with role-based access
+- User & vendor registration with role-based access
 
 Event creation and management
 
@@ -46,6 +46,6 @@ Payments: Stripe / PayPal (planned)
 
 ## 👨‍🏫 Supervision
 
-Mentor: Mr. Thilina Kurukulasooriya (Engineering Manager – LSEG)
+**Mentor:** Mr. Thilina Kurukulasooriya (Engineering Manager – LSEG)
 
-Supervisor: Mr.Y.M.S. Tharaka (Lecturer, Faculty of Computing)
+**Supervisor:** Mr.Y.M.S. Tharaka (Lecturer, Faculty of Computing)
