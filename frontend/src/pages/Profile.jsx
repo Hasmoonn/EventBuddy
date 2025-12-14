@@ -26,7 +26,7 @@ const Profile = () => {
     setLoading(true)
 
     try {      
-      const {data} = await axios.get(`${backendUrl}/api/profile`, { withCredentials: true });
+      const {data} = await axios.get(`${backendUrl}/api/profile/get-profile`, { withCredentials: true });
 
       if (data.success) {
         setProfile(data.user);
@@ -59,7 +59,7 @@ const Profile = () => {
     setSaving(true);
 
     try {
-      const { data } = await axios.put(`${backendUrl}/api/profile`, {
+      const { data } = await axios.put(`${backendUrl}/api/profile/update-profile`, {
         name: profile.name,
         phone: profile.phone,
         bio: profile.bio,
