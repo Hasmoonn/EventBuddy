@@ -38,9 +38,9 @@ EventBuddy is a web-based event planning platform that simplifies organizing eve
 
 ## 👥 Team – Group 12
 
-- 21CSE0149 – B.M.D.W. Dayananda
-
 - 21CSE0146 – M.A.R.M. Hasmoon
+
+- 21CSE0149 – B.M.D.W. Dayananda
 
 - 21CSE0195 – O.N.H. Munasingha
 
