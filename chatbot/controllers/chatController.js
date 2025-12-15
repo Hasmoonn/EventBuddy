@@ -4,6 +4,7 @@ const chatbotService = require('../services/chatbotService');
 class ChatController {
   async sendMessage(req, res) {
     try {
+      console.log('chatbot received /api/chat body:', JSON.stringify(req.body));
       const { message, sessionId } = req.body;
 
       if (!message || message.trim() === '') {
