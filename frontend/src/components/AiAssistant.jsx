@@ -11,12 +11,26 @@ import {
 } from 'lucide-react'
 import { getQuickSuggestions, sendChatMessage } from '../api/chat.api'
 
+const EVENT_TYPES = [
+  'Wedding',
+  'Birthday Party',
+  'Corporate Event',
+  'Conference',
+  'Workshop',
+  'Baby Shower',
+  'Anniversary',
+  'Graduation',
+  'Holiday Party',
+  'Other'
+]
+
 const AiAssistant = ({ eventType }) => {
   // Editable event context
   const [budget, setBudget] = useState(10000)
   const [guestCount, setGuestCount] = useState(100)
   const [location, setLocation] = useState('')
   const [time, setTime] = useState('6-months')
+  const [selectedEventType, setSelectedEventType] = useState(eventType || '')
 
   // Chat state
   const [query, setQuery] = useState('')
@@ -28,18 +42,19 @@ const AiAssistant = ({ eventType }) => {
 
     try {
       let res
+      const finalEventType = selectedEventType || eventType
 
       if (query.trim()) {
         res = await sendChatMessage(query.trim(), {
           page: 'ai-assistant',
-          eventType,
+          eventType: finalEventType,
           budget,
           guestCount,
           location,
           time
         })
       } else {
-        res = await getQuickSuggestions(eventType || null)
+        res = await getQuickSuggestions(finalEventType || null)
       }
 
       if (res?.success && Array.isArray(res.suggestions)) {
@@ -105,7 +120,8 @@ const AiAssistant = ({ eventType }) => {
             <div>
               <h3 className="text-lg font-semibold">AI Planning Assistant</h3>
               <p className="text-sm text-muted-foreground">
-                Get personalized recommendations for your {eventType}
+                Get personalized recommendations for your{' '}
+                {selectedEventType || eventType || 'event'}
               </p>
             </div>
           </div>
@@ -113,7 +129,24 @@ const AiAssistant = ({ eventType }) => {
 
         <div className="p-6 pt-0 space-y-4">
           {/* Editable context inputs */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+
+            {/* Event Type */}
+            <div className="flex items-center space-x-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <select
+                value={selectedEventType}
+                onChange={(e) => setSelectedEventType(e.target.value)}
+                className="w-full rounded-md border px-2 py-1"
+              >
+                <option value="">Select Event</option>
+                {EVENT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Guests */}
             <div className="flex items-center space-x-2">
@@ -180,7 +213,7 @@ const AiAssistant = ({ eventType }) => {
           {/* Submit */}
           <button
             onClick={generateSuggestions}
-            disabled={isLoading}
+            disabled={isLoading || !selectedEventType}
             className="w-full btn-hero flex items-center justify-center"
           >
             {isLoading ? (
