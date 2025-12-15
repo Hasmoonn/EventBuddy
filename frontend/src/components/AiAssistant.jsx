@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Bot, CheckCircle, Clock, DollarSign, Lightbulb, MapPin, Sparkles, Users } from 'lucide-react'
+import { getQuickSuggestions, sendChatMessage } from '../api/chat.api'
 
 const AiAssistant = ({ eventType, budget,  guestCount, location }) => {
 
@@ -7,61 +8,41 @@ const AiAssistant = ({ eventType, budget,  guestCount, location }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const generateSuggestions = () => {
-    // setIsLoading(true);
-    
-    // Simulate AI processing
-    // setTimeout(() => {
-    //   const aiSuggestions = [
-    //     {
-    //       type: "timeline",
-    //       title: "Recommended Timeline",
-    //       icon: Calendar,
-    //       items: [
-    //         "6 months before: Book venue and send save-the-dates",
-    //         "4 months before: Finalize catering and music",
-    //         "2 months before: Send invitations and confirm details",
-    //         "1 week before: Final headcount and setup"
-    //       ]
-    //     },
-    //     {
-    //       type: "budget",
-    //       title: "Budget Optimization",
-    //       icon: DollarSign,
-    //       items: [
-    //         `Venue (40%): $${Math.round(budget * 0.4).toLocaleString()}`,
-    //         `Catering (30%): $${Math.round(budget * 0.3).toLocaleString()}`,
-    //         `Photography (15%): $${Math.round(budget * 0.15).toLocaleString()}`,
-    //         `Decorations (15%): $${Math.round(budget * 0.15).toLocaleString()}`
-    //       ]
-    //     },
-    //     {
-    //       type: "vendors",
-    //       title: "Recommended Vendors",
-    //       icon: Users,
-    //       items: [
-    //         "Top-rated photographers in your area",
-    //         "Eco-friendly catering options",
-    //         "Local florists with sustainable practices",
-    //         "Entertainment that fits your budget"
-    //       ]
-    //     },
-    //     {
-    //       type: "checklist",
-    //       title: "Smart Checklist",
-    //       icon: CheckCircle,
-    //       items: [
-    //         "Create guest list and collect addresses",
-    //         "Schedule venue walkthrough",
-    //         "Book photographer for engagement session",
-    //         "Research catering menu options"
-    //       ]
-    //     }
-    //   ];
-      
-    //   setSuggestions(aiSuggestions);
-    //   setIsLoading(false);
-    // }, 1500);
+  const generateSuggestions = async () => {
+    setIsLoading(true);
+
+    try {
+      let res;
+
+      if (query && query.trim().length > 0) {
+        // If user provided a query, send it to the chat endpoint and show the AI response
+        res = await sendChatMessage(query.trim(), { page: 'ai-assistant', eventType, budget, guestCount, location });
+      } else {
+        // No query provided — return quick suggestions based on event type
+        res = await getQuickSuggestions(eventType || null);
+      }
+
+      if (res && res.success && Array.isArray(res.suggestions)) {
+        setSuggestions([
+          {
+            type: 'quick',
+            title: 'Quick Suggestions',
+            icon: Lightbulb,
+            items: res.suggestions
+          }
+        ]);
+      } else if (res && res.success && res.message) {
+        setSuggestions([
+          { type: 'response', title: 'AI Response', icon: Lightbulb, items: [res.message] }
+        ]);
+      } else {
+        setSuggestions([{ type: 'none', title: 'No Suggestions', icon: Lightbulb, items: ['No suggestions available.'] }]);
+      }
+    } catch (error) {
+      setSuggestions([{ type: 'error', title: 'Error', icon: Lightbulb, items: ['Failed to fetch suggestions.'] }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const ecoFriendlyTips = [
