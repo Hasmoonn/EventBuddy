@@ -5,7 +5,7 @@ const CHATBOT_BASE = process.env.CHATBOT_BASE_URL || 'http://localhost:3001';
 
 const axiosInstance = axios.create({
 	baseURL: CHATBOT_BASE,
-	timeout: 10000,
+	timeout: 60000,
 });
 
 export async function callChatbot(payload) {
