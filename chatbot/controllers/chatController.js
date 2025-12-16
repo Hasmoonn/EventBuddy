@@ -4,8 +4,9 @@ const chatbotService = require('../services/chatbotService');
 class ChatController {
   async sendMessage(req, res) {
     try {
-      const { message, sessionId } = req.body;
-
+      console.log('chatbot received /api/chat body:', JSON.stringify(req.body));
+      const { message, sessionId, context } = req.body; // ← Add context here
+      
       if (!message || message.trim() === '') {
         return res.status(400).json({
           success: false,
@@ -15,7 +16,8 @@ class ChatController {
 
       const response = await chatbotService.generateResponse(
         message,
-        sessionId || `session-${Date.now()}`
+        sessionId || `session-${Date.now()}`,
+        context // ← Pass context to service
       );
 
       res.json(response);
@@ -51,7 +53,7 @@ class ChatController {
     try {
       const { eventType } = req.params;
       const eventInfo = chatbotService.getEventInfo(eventType);
-
+      
       if (!eventInfo) {
         return res.status(404).json({
           success: false,

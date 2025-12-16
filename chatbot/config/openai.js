@@ -12,3 +12,4 @@ const config = {
 };
 
 module.exports = { openai, config };
+module.exports.default = openai;

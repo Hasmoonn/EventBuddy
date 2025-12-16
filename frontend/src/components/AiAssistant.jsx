@@ -1,126 +1,220 @@
 import React, { useState } from 'react'
-import { Bot, CheckCircle, Clock, DollarSign, Lightbulb, MapPin, Sparkles, Users } from 'lucide-react'
+import {
+  Bot,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Lightbulb,
+  MapPin,
+  Sparkles,
+  Users
+} from 'lucide-react'
+import { getQuickSuggestions, sendChatMessage } from '../api/chat.api'
 
-const AiAssistant = ({ eventType, budget,  guestCount, location }) => {
+const EVENT_TYPES = [
+  'Wedding',
+  'Birthday Party',
+  'Corporate Event',
+  'Conference',
+  'Workshop',
+  'Baby Shower',
+  'Anniversary',
+  'Graduation',
+  'Holiday Party',
+  'Other'
+]
 
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+const AiAssistant = ({ eventType }) => {
+  // Editable event context
+  const [budget, setBudget] = useState(10000)
+  const [guestCount, setGuestCount] = useState(100)
+  const [location, setLocation] = useState('')
+  const [time, setTime] = useState('6-months')
+  const [selectedEventType, setSelectedEventType] = useState(eventType || '')
 
-  const generateSuggestions = () => {
-    // setIsLoading(true);
-    
-    // Simulate AI processing
-    // setTimeout(() => {
-    //   const aiSuggestions = [
-    //     {
-    //       type: "timeline",
-    //       title: "Recommended Timeline",
-    //       icon: Calendar,
-    //       items: [
-    //         "6 months before: Book venue and send save-the-dates",
-    //         "4 months before: Finalize catering and music",
-    //         "2 months before: Send invitations and confirm details",
-    //         "1 week before: Final headcount and setup"
-    //       ]
-    //     },
-    //     {
-    //       type: "budget",
-    //       title: "Budget Optimization",
-    //       icon: DollarSign,
-    //       items: [
-    //         `Venue (40%): $${Math.round(budget * 0.4).toLocaleString()}`,
-    //         `Catering (30%): $${Math.round(budget * 0.3).toLocaleString()}`,
-    //         `Photography (15%): $${Math.round(budget * 0.15).toLocaleString()}`,
-    //         `Decorations (15%): $${Math.round(budget * 0.15).toLocaleString()}`
-    //       ]
-    //     },
-    //     {
-    //       type: "vendors",
-    //       title: "Recommended Vendors",
-    //       icon: Users,
-    //       items: [
-    //         "Top-rated photographers in your area",
-    //         "Eco-friendly catering options",
-    //         "Local florists with sustainable practices",
-    //         "Entertainment that fits your budget"
-    //       ]
-    //     },
-    //     {
-    //       type: "checklist",
-    //       title: "Smart Checklist",
-    //       icon: CheckCircle,
-    //       items: [
-    //         "Create guest list and collect addresses",
-    //         "Schedule venue walkthrough",
-    //         "Book photographer for engagement session",
-    //         "Research catering menu options"
-    //       ]
-    //     }
-    //   ];
-      
-    //   setSuggestions(aiSuggestions);
-    //   setIsLoading(false);
-    // }, 1500);
-  };
+  // Chat state
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const generateSuggestions = async () => {
+    setIsLoading(true)
+
+    try {
+      let res
+      const finalEventType = selectedEventType || eventType
+
+      if (query.trim()) {
+        res = await sendChatMessage(query.trim(), {
+          page: 'ai-assistant',
+          eventType: finalEventType,
+          budget,
+          guestCount,
+          location,
+          time
+        })
+      } else {
+        res = await getQuickSuggestions(finalEventType || null)
+      }
+
+      if (res?.success && Array.isArray(res.suggestions)) {
+        setSuggestions([
+          {
+            type: 'quick',
+            title: 'Quick Suggestions',
+            icon: Lightbulb,
+            items: res.suggestions
+          }
+        ])
+      } else if (res?.success && res.message) {
+        setSuggestions([
+          {
+            type: 'response',
+            title: 'AI Response',
+            icon: Lightbulb,
+            items: [res.message]
+          }
+        ])
+      } else {
+        setSuggestions([
+          {
+            type: 'none',
+            title: 'No Suggestions',
+            icon: Lightbulb,
+            items: ['No suggestions available']
+          }
+        ])
+      }
+    } catch (error) {
+      setSuggestions([
+        {
+          type: 'error',
+          title: 'Error',
+          icon: Lightbulb,
+          items: ['Failed to fetch suggestions']
+        }
+      ])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const ecoFriendlyTips = [
-    "Use digital invitations instead of paper",
-    "Choose local, seasonal flowers",
-    "Opt for venues with renewable energy",
-    "Select vendors who practice sustainability",
-    "Use biodegradable decorations",
-    "Implement a zero-waste catering plan"
-  ];
+    'Use digital invitations instead of paper',
+    'Choose local, seasonal flowers',
+    'Opt for venues with renewable energy',
+    'Select vendors who practice sustainability',
+    'Use biodegradable decorations',
+    'Implement a zero-waste catering plan'
+  ]
 
   return (
     <div className="space-y-6 mt-8 mb-6">
       {/* AI Chat Interface */}
-      <div className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm border-[rgba(var(--primary),0.2)]">
-        <div className='flex flex-col space-y-1.5 p-6'>
+      <div className="rounded-lg border bg-[rgb(var(--card))] shadow-sm border-[rgba(var(--primary),0.2)]">
+        <div className="p-6">
           <div className="flex items-center space-x-2">
             <div className="p-2 gradient-primary rounded-lg">
               <Bot className="h-5 w-5 text-white" />
             </div>
             <div>
-              <div className="font-semibold leading-none tracking-tight text-lg">AI Planning Assistant</div>
-              <div className='text-sm text-[rgb(var(--muted-foreground))]'>
-                Get personalized recommendations for your {eventType}
-              </div>
+              <h3 className="text-lg font-semibold">AI Planning Assistant</h3>
+              <p className="text-sm text-muted-foreground">
+                Get personalized recommendations for your{' '}
+                {selectedEventType || eventType || 'event'}
+              </p>
             </div>
           </div>
         </div>
+
         <div className="p-6 pt-0 space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          {/* Editable context inputs */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+
+            {/* Event Type */}
             <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-[rgb(var(--primary))]" />
-              <span>{guestCount} guests</span>
+              <Sparkles className="h-4 w-4 text-primary" />
+              <select
+                value={selectedEventType}
+                onChange={(e) => setSelectedEventType(e.target.value)}
+                className="w-full rounded-md border px-2 py-1"
+              >
+                <option value="">Select Event</option>
+                {EVENT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {/* Guests */}
             <div className="flex items-center space-x-2">
-              <DollarSign className="h-4 w-4 text-[rgb(var(--primary))]" />
-              <span>${budget.toLocaleString()}</span>
+              <Users className="h-4 w-4 text-primary" />
+              <input
+                type="number"
+                min="1"
+                value={guestCount}
+                onChange={(e) => setGuestCount(Number(e.target.value))}
+                className="w-full rounded-md border px-2 py-1"
+                placeholder="Guests"
+              />
             </div>
+
+            {/* Budget */}
             <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4 text-[rgb(var(--primary))]" />
-              <span>{location}</span>
+              <DollarSign className="h-4 w-4 text-primary" />
+              <input
+                type="number"
+                min="0"
+                value={budget}
+                onChange={(e) => setBudget(Number(e.target.value))}
+                className="w-full rounded-md border px-2 py-1"
+                placeholder="Budget"
+              />
             </div>
+
+            {/* Location */}
             <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 text-[rgb(var(--primary))]" />
-              <span>6 months</span>
+              <MapPin className="h-4 w-4 text-primary" />
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full rounded-md border px-2 py-1"
+                placeholder="Location"
+              />
+            </div>
+
+            {/* Time */}
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4 text-primary" />
+              <select
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="w-full rounded-md border px-2 py-1"
+              >
+                <option value="next-month">Next month</option>
+                <option value="3-months">3 months</option>
+                <option value="6-months">6 months</option>
+                <option value="1-year">1 year</option>
+              </select>
             </div>
           </div>
-          
+
+          {/* Message box */}
           <textarea
             placeholder="Ask me anything about planning your event..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex w-full rounded-md border border-[rgb(var(--input))] bg-[rgb(var(--background))] px-3 py-2 text-base ring-offset-[rgb(var(--background))] placeholder:text-[rgb(var(--muted-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm min-h-[80px]"
+            className="w-full rounded-md border px-3 py-2 min-h-[80px]"
           />
-          
-          <button 
+
+          {/* Submit */}
+          <button
             onClick={generateSuggestions}
-            disabled={isLoading}
-            className="inline-flex items-center justify-center rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 py-2 w-full btn-hero"
+            disabled={isLoading || !selectedEventType}
+            className="w-full btn-hero flex items-center justify-center"
           >
             {isLoading ? (
               <>
@@ -137,22 +231,20 @@ const AiAssistant = ({ eventType, budget,  guestCount, location }) => {
         </div>
       </div>
 
-      {/* AI Suggestions */}
+      {/* Suggestions */}
       {suggestions.length > 0 && (
         <div className="grid md:grid-cols-2 gap-6">
-          {suggestions.map((suggestion, index) => (
-            <div key={index} className="rounded-lg border bg-[rgb(var(--card))] text-[rgb(var(--card-foreground))] shadow-sm h-fit">
-              <div className="flex flex-col space-y-1.5 p-6 pb-3">
-                <div className="flex items-center space-x-2">
-                  <suggestion.icon className="h-5 w-5 text-[rgb(var(--primary))]" />
-                  <div className="font-semibold leading-none tracking-tight text-base">{suggestion.title}</div>
-                </div>
+          {suggestions.map((s, i) => (
+            <div key={i} className="rounded-lg border bg-card shadow-sm">
+              <div className="p-6 pb-3 flex items-center space-x-2">
+                <s.icon className="h-5 w-5 text-primary" />
+                <h4 className="font-semibold">{s.title}</h4>
               </div>
-              <div className='p-6 pt-0'>
+              <div className="p-6 pt-0">
                 <ul className="space-y-2">
-                  {suggestion.items.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-start space-x-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                  {s.items.map((item, idx) => (
+                    <li key={idx} className="flex items-start space-x-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -163,24 +255,21 @@ const AiAssistant = ({ eventType, budget,  guestCount, location }) => {
         </div>
       )}
 
-      {/* Eco-Friendly Recommendations */}
-      <div className="rounded-lg border text-[rgb(var(--card-foreground))] shadow-sm bg-green-50 border-green-200">
-        <div className='flex flex-col space-y-1.5 p-6'>
-          <div className="flex items-center space-x-2">
-            <Lightbulb className="h-5 w-5 text-green-600" />
-            <div className="text-2xl font-semibold leading-none tracking-tight text-green-800">
-              Eco-Friendly Planning Tips
-            </div>
-          </div>
-        </div>
-        <div className='p-6 pt-0'>
-          <div className="grid md:grid-cols-2 gap-2">
-            {ecoFriendlyTips.map((tip, index) => (
-              <div key={index} className="inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors border-transparent hover:bg-green-300 justify-start p-2 bg-green-200 text-green-800">
-                {tip}
-              </div>
-            ))}
-          </div>
+      {/* Eco Tips */}
+      <div className="rounded-lg border bg-green-50 border-green-200 p-6">
+        <h3 className="text-lg font-semibold text-green-800 flex items-center">
+          <Lightbulb className="h-5 w-5 mr-2" />
+          Eco-Friendly Planning Tips
+        </h3>
+        <div className="grid md:grid-cols-2 gap-2 mt-4">
+          {ecoFriendlyTips.map((tip, i) => (
+            <span
+              key={i}
+              className="bg-green-200 text-green-800 rounded-full px-3 py-1 text-xs"
+            >
+              {tip}
+            </span>
+          ))}
         </div>
       </div>
     </div>

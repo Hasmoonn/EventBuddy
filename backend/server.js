@@ -14,10 +14,11 @@ import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import analyticsRouter from "./routes/analyticsRoutes.js";
 import notificationRouter from "./routes/notificationRoutes.js";
+import chatRouter from "./routes/chatRoutes.js";
 
 
 const app = express();
-const port = 4000 || process.env.PORT;
+const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
@@ -41,6 +42,8 @@ app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/analytics", analyticsRouter);
 app.use("/api/notifications", notificationRouter);
+app.use("/api/chat", chatRouter);
+// Removed redundant app.use for chatRoutes
 
 
 app.listen(port, () => {

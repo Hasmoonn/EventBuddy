@@ -8,28 +8,53 @@ class ChatbotService {
     this.conversationHistory = new Map();
   }
 
-  async generateResponse(userMessage, sessionId = 'default') {
+  async generateResponse(userMessage, sessionId = 'default', context = {}) {
     try {
-      if (!this.conversationHistory.has(sessionId)) {
-        this.conversationHistory.set(sessionId, [
-          { role: 'system', content: SYSTEM_PROMPT }
-        ]);
+      // 🔥 CHECK IF THIS IS AN AI ASSISTANT REQUEST
+      const isAIAssistant = context?.page === 'ai-assistant' || 
+                           userMessage.includes('MODE: AI_PLANNING_ASSISTANT');
+      
+      console.log('Is AI Assistant mode:', isAIAssistant);
+      console.log('Message preview:', userMessage.substring(0, 200));
+
+      let messages = [];
+      
+      if (isAIAssistant) {
+        // ✅ For AI Assistant: Use formatted message directly, NO system prompt
+        console.log('Using AI Assistant mode - bypassing system prompt');
+        messages = [
+          { role: 'user', content: userMessage }
+        ];
+      } else {
+        // ✅ For regular chat: Use system prompt + history
+        console.log('Using regular chat mode with history');
+        if (!this.conversationHistory.has(sessionId)) {
+          this.conversationHistory.set(sessionId, [
+            { role: 'system', content: SYSTEM_PROMPT }
+          ]);
+        }
+
+        const history = this.conversationHistory.get(sessionId);
+        history.push({ role: 'user', content: userMessage });
+
+        const recentHistory = history.slice(-11);
+        messages = recentHistory;
       }
-
-      const history = this.conversationHistory.get(sessionId);
-      history.push({ role: 'user', content: userMessage });
-
-      const recentHistory = history.slice(-11);
 
       const completion = await openai.chat.completions.create({
         model: config.model,
-        messages: recentHistory,
+        messages: messages,
         temperature: config.temperature,
         max_tokens: config.maxTokens
       });
 
       const assistantMessage = completion.choices[0].message.content;
-      history.push({ role: 'assistant', content: assistantMessage });
+
+      // Only save to history for regular chat (not AI assistant one-offs)
+      if (!isAIAssistant) {
+        const history = this.conversationHistory.get(sessionId);
+        history.push({ role: 'assistant', content: assistantMessage });
+      }
 
       return {
         success: true,
