@@ -1,3 +1,5 @@
+import callChatbot from "../services/chatbotProxy.service.js";
+
 export const chatProxy = async (req, res) => {
   try {
     console.log('chatProxy request body:', JSON.stringify(req.body));
