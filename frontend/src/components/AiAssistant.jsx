@@ -233,7 +233,7 @@ const AiAssistant = ({ eventType }) => {
 
       {/* Suggestions */}
       {suggestions.length > 0 && (
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="w-full">
           {suggestions.map((s, i) => (
             <div key={i} className="rounded-lg border bg-card shadow-sm">
               <div className="p-6 pb-3 flex items-center space-x-2">
