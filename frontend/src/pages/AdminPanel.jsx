@@ -421,7 +421,7 @@ const AdminPanel = () => {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center">
                           <span className="text-sm">User Growth Rate</span>
-                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>+{analytics.userGrowthRate}%</div>
+                          <div className='inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all border-transparent bg-[rgb(var(--secondary))] text-[rgb(var(--secondary-foreground))] hover:bg-[rgba(var(--secondary),0.8)]'>{analytics.userGrowthRate}%</div>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Vendor Conversion Rate</span>
