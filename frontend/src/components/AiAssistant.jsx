@@ -10,6 +10,7 @@ import {
   Users
 } from 'lucide-react'
 import { getQuickSuggestions, sendChatMessage } from '../api/chat.api'
+import ReactMarkdown from 'react-markdown'
 
 const EVENT_TYPES = [
   'Wedding',
@@ -38,6 +39,7 @@ const AiAssistant = ({ eventType }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const generateSuggestions = async () => {
+     if (!selectedEventType) return; // safety check
     setIsLoading(true)
 
     try {
@@ -51,13 +53,22 @@ const AiAssistant = ({ eventType }) => {
           budget,
           guestCount,
           location,
-          time
+          time,
         })
       } else {
         res = await getQuickSuggestions(finalEventType || null)
       }
 
-      if (res?.success && Array.isArray(res.suggestions)) {
+      if (res?.success && Array.isArray(res.structured)) {
+        setSuggestions([
+          {
+            type: 'structured',
+            title: 'AI Event Plan',
+            icon: Lightbulb,
+            items: res.structured
+          }
+        ])
+      } else if (res?.success && Array.isArray(res.suggestions)) {
         setSuggestions([
           {
             type: 'quick',
@@ -69,10 +80,10 @@ const AiAssistant = ({ eventType }) => {
       } else if (res?.success && res.message) {
         setSuggestions([
           {
-            type: 'response',
+            type: 'structured',
             title: 'AI Response',
             icon: Lightbulb,
-            items: [res.message]
+            items: [{ content: res.message }]
           }
         ])
       } else {
@@ -235,22 +246,82 @@ const AiAssistant = ({ eventType }) => {
       {suggestions.length > 0 && (
         <div className="w-full">
           {suggestions.map((s, i) => (
-            <div key={i} className="rounded-lg border bg-card shadow-sm">
-              <div className="p-6 pb-3 flex items-center space-x-2">
-                <s.icon className="h-5 w-5 text-primary" />
-                <h4 className="font-semibold">{s.title}</h4>
+            // <div key={i} className="rounded-lg border bg-card shadow-sm">
+            //   <div className="p-6 pb-3 flex items-center space-x-2">
+            //     <s.icon className="h-5 w-5 text-primary" />
+            //     <h4 className="font-semibold">{s.title}</h4>
+            //   </div>
+            //   <div className="p-6 pt-0">
+            //     <ul className="space-y-2">
+            //       {s.items.map((item, idx) => (
+            //         <li key={idx} className="flex items-start space-x-2 text-sm">
+            //           <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+            //           <span>{item}</span>
+            //         </li>
+            //       ))}
+            //     </ul>
+            //   </div>
+            // </div>
+
+            <div key={i} className="w-full">
+            {s.items.map((item, idx) => (
+              <div
+                key={idx}
+                className="rounded-lg border bg-card shadow-sm mb-4"
+              >
+                <div className="p-6 pb-3 flex items-center space-x-2">
+                  <s.icon className="h-5 w-5 text-primary" />
+                  <h4 className="font-semibold">{s.type === 'structured' ? item.title : s.title}</h4>
+                </div>
+
+                <div className="p-6 pt-0 text-sm space-y-2">
+                  {s.type === 'structured' ? (
+                      <div className="prose max-w-full">
+                        <ReactMarkdown
+                          components={{
+                            h2: ({ node, ...props }) => (
+                              <h2
+                                className="text-lg font-semibold mt-4"
+                                {...props}
+                              />
+                            ),
+                            h3: ({ node, ...props }) => (
+                              <h3
+                                className="text-md font-semibold mt-3"
+                                {...props}
+                              />
+                            ),
+                            li: ({ node, ...props }) => (
+                              <li className="ml-4 list-disc" {...props} />
+                            ),
+                            a: ({ node, ...props }) => (
+                              <a
+                                className="text-blue-600 underline"
+                                target="_blank"
+                                rel="noreferrer"
+                                {...props}
+                              />
+                            ),
+                            p: ({ node, ...props }) => <p className="mt-1" {...props} />
+                          }}
+                        >
+                          {item.content || 'No details provided'}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <ul className="space-y-1">
+                        {(item.items || [item]).map((line, li) => (
+                          <li key={li} className="flex items-start space-x-2">
+                            <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                            <span>{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                </div>
               </div>
-              <div className="p-6 pt-0">
-                <ul className="space-y-2">
-                  {s.items.map((item, idx) => (
-                    <li key={idx} className="flex items-start space-x-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            ))}
+          </div>
           ))}
         </div>
       )}
