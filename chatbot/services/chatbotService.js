@@ -56,10 +56,18 @@ class ChatbotService {
         history.push({ role: 'assistant', content: assistantMessage });
       }
 
+      // ✅ Post-process AI assistant response into structured JSON
+      let structured = null;
+      if (isAIAssistant) {
+        structured = this.parseStructuredJSON(assistantMessage);
+      }
+
       return {
         success: true,
         message: assistantMessage,
-        sessionId: sessionId
+        sessionId: sessionId,
+        isPlan: isAIAssistant,
+        structured,
       };
 
     } catch (error) {
@@ -71,6 +79,36 @@ class ChatbotService {
       };
     }
   }
+
+  /**
+   * Parse AI assistant JSON safely, fallback to text if parsing fails
+   */
+  parseStructuredJSON(aiText) {
+    try {
+      // Remove any leading/trailing text outside JSON braces
+      const jsonMatch = aiText.match(/\{[\s\S]*\}$/);
+      if (!jsonMatch) return null;
+
+      const parsed = JSON.parse(jsonMatch[0]);
+
+      // Ensure structure is correct
+      if (
+        parsed.sections &&
+        Array.isArray(parsed.sections) &&
+        parsed.sections.every(
+          (s) => s.title && typeof s.title === 'string' && s.content
+        )
+      ) {
+        return parsed.sections;
+      }
+
+      return null;
+    } catch (err) {
+      console.warn('Failed to parse structured JSON:', err.message);
+      return null;
+    }
+  }
+
 
   getQuickSuggestions(eventType = null) {
     const suggestions = {
